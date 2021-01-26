@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HomeDoctor.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class RolesController : ControllerBase
     {

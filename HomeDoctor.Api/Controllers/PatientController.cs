@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HomeDoctor.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]s")]
     [ApiController]
     public class PatientController : ControllerBase
     {
@@ -23,7 +23,7 @@ namespace HomeDoctor.Api.Controllers
         /// <summary>
         /// Get Information of Patient by Id.
         /// </summary>
-        [HttpGet]
+        [HttpGet("{patientId}")]
         public async Task<IActionResult> GetPatientById(int patientId)
         {
             if (patientId != 0)

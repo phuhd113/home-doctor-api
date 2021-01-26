@@ -9,29 +9,49 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HomeDoctor.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]s")]
     [ApiController]
     public class ContractController : ControllerBase
     {
         private readonly IContractService _contractSer;
+        private readonly IPatientService _patientSer;
+        private readonly IDoctorService _doctorSer;
 
-        public ContractController(IContractService contractSer)
+        public ContractController(IContractService contractSer, IPatientService patientSer, IDoctorService doctorSer)
         {
             _contractSer = contractSer;
+            _patientSer = patientSer;
+            _doctorSer = doctorSer;
         }
+
+
 
         /// <summary>
         /// Patient request contract with status "Pending"
         /// </summary>
-        [HttpPost("createContract")]
+        [HttpPost()]
         public async Task<IActionResult> CreateContractByPatient(ContractCreation contract)
         {
             if(contract != null)
             {
-                if (_contractSer.CreateContractByPatient(contract).Result)
-                {
-                    return StatusCode(201);
+                if(!_contractSer.CheckContractToCreateNew(contract.DoctorId, contract.PatientId).Result)
+                {                 
+                    
+                    var patient = _patientSer.GetPatientInformation(contract.PatientId);
+                    var doctor = _doctorSer.GetDoctorInformation(null, contract.DoctorId);
+                    Task.WaitAll(patient, doctor);
+                    if (patient != null && doctor != null)
+                    {
+                        if (_contractSer.CreateContractByPatient(contract, patient.Result, doctor.Result).Result)
+                        {
+                            return StatusCode(201);
+                        }
+                    }
                 }
+                else
+                {
+                    return BadRequest("A contract exists between a doctor and a patient");
+                }                              
             }
             return BadRequest();
         }

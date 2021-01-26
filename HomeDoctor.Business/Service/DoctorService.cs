@@ -22,7 +22,7 @@ namespace HomeDoctor.Business.Service
             _repo = _uow.GetRepository<Doctor>();
         }
 
-        public async Task<DoctorInformation> GetDoctorInformation(string username, int doctorId)
+        public async Task<DoctorInformation> GetDoctorInformation(string? username, int? doctorId)
         {
             Doctor tmp = null;
             if (username != null)

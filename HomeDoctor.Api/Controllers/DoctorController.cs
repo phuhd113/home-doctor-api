@@ -14,7 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace HomeDoctor.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]s")]
     [ApiController]
     public class DoctorController : ControllerBase
     {
@@ -29,7 +29,7 @@ namespace HomeDoctor.Api.Controllers
         /// <summary>
         /// Login of Doctor with username and password.
         /// </summary>
-        [HttpPost()]
+        [HttpPost("Login")]
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginDoctor login)
         {
