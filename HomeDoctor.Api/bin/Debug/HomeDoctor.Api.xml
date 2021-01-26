@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>HomeDoctor.Api</name>
+    </assembly>
+    <members>
+        <member name="M:HomeDoctor.Api.Controllers.ContractController.CreateContractByPatient(HomeDoctor.Business.ViewModel.RequestModel.ContractCreation)">
+            <summary>
+            Patient request contract with status "Pending"
+            </summary>
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.ContractController.GetContractOfDoctorByStatus(System.Int32,System.String)">
+            <summary>
+            Get contract of Doctor by status
+            </summary>
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.DoctorController.Login(HomeDoctor.Business.ViewModel.RequestModel.LoginDoctor)">
+            <summary>
+            Login of Doctor with username and password.
+            </summary>
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.DoctorController.GetDoctorInformationByUsername(System.String)">
+            <summary>
+            Get Doctor by username
+            </summary>
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.DoctorController.GetDoctorInformationById(System.Int32)">
+            <summary>
+            Get Doctor by Id
+            </summary>      
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.PatientController.GetPatientById(System.Int32)">
+            <summary>
+            Get Information of Patient by Id.
+            </summary>
+        </member>
+    </members>
+</doc>

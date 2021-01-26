@@ -1,0 +1,12 @@
+F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\bin\Debug\netcoreapp3.1\HomeDoctor.Business.deps.json
+F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\bin\Debug\netcoreapp3.1\HomeDoctor.Business.dll
+F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\bin\Debug\netcoreapp3.1\HomeDoctor.Business.pdb
+F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\obj\Debug\netcoreapp3.1\HomeDoctor.Business.csprojAssemblyReference.cache
+F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\obj\Debug\netcoreapp3.1\HomeDoctor.Business.AssemblyInfoInputs.cache
+F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\obj\Debug\netcoreapp3.1\HomeDoctor.Business.AssemblyInfo.cs
+F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\obj\Debug\netcoreapp3.1\HomeDoctor.Business.dll
+F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\obj\Debug\netcoreapp3.1\HomeDoctor.Business.pdb
+F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\bin\Debug\netcoreapp3.1\HomeDoctor.Data.dll
+F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\bin\Debug\netcoreapp3.1\HomeDoctor.Data.pdb
+F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\obj\Debug\netcoreapp3.1\HomeDoctor.Business.csproj.CoreCompileInputs.cache
+F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\obj\Debug\netcoreapp3.1\HomeDoctor.Business.csproj.CopyComplete
