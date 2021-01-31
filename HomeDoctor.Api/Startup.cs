@@ -48,10 +48,9 @@ namespace HomeDoctor.Api
                 options.AddPolicy(name: MyAllowSpecificOrigins,
                                   builder =>
                                   {
-                                      builder.WithOrigins("http://example.com",
-                                                          "http://www.contoso.com")
-                                                          .AllowAnyHeader()
-                                                          .AllowAnyMethod();
+                                      builder.AllowAnyOrigin()
+                                             .AllowAnyHeader()
+                                             .AllowAnyMethod();
                                   });
             });
             services.AddSignalR();
@@ -121,6 +120,8 @@ namespace HomeDoctor.Api
             services.AddScoped<IPatientService, PatientService>();
             services.AddScoped<IDoctorService, DoctorService>();
             services.AddScoped<IContractService, ContractService>();
+            services.AddScoped<ILicenseService, LicenseService>();
+            services.AddScoped<IDiseaseService, DiseaseService>();
 
             
         }
@@ -134,6 +135,8 @@ namespace HomeDoctor.Api
             }
 
             app.UseRouting();
+            app.UseCors(MyAllowSpecificOrigins);
+
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>

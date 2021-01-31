@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using HomeDoctor.Business.IService;
@@ -14,14 +15,14 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace HomeDoctor.Api.Controllers
 {
-    [Route("api/v1/[controller]s")]
+    [Route("api/v1/[controller]")]
     [ApiController]
-    public class DoctorController : ControllerBase
+    public class DoctorsController : ControllerBase
     {
         private readonly IDoctorService _serDoc;
         private readonly IConfiguration _config;
 
-        public DoctorController(IDoctorService serDoc, IConfiguration config)
+        public DoctorsController(IDoctorService serDoc, IConfiguration config)
         {
             _serDoc = serDoc;
             _config = config;
@@ -33,10 +34,10 @@ namespace HomeDoctor.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginDoctor login)
         {
-            var check = _serDoc.Login(login.Username, login.Password).Result;
-            if (check)
+            var doctor = _serDoc.Login(login.Username, login.Password).Result;
+            if (doctor != null)
             {
-                return Ok(new { Token = GenerateJSONWebToken() });
+                return Ok(new { Token = GenerateJSONWebToken(doctor.DoctorId)});
             }
             return NotFound();
         }
@@ -74,14 +75,15 @@ namespace HomeDoctor.Api.Controllers
             }
             return NotFound();
         }
-        private string GenerateJSONWebToken()
+        private string GenerateJSONWebToken(int doctorId)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
+            var claims = new List<Claim>();
+            claims.Add(new Claim("doctorId", doctorId.ToString()));
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],
               _config["Jwt:Audience"],
-              null,
+              claims,
               expires: DateTime.Now.AddMinutes(120),
               signingCredentials: credentials);
 

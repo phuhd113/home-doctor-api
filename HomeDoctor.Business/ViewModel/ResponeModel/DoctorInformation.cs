@@ -6,6 +6,7 @@ namespace HomeDoctor.Business.ViewModel.ResponeModel
 {
     public class DoctorInformation
     {
+        public int DoctorId { get; set; }
         public string Username { get; set; }
         public string FullName { get; set; }
         public string WorkLocation { get; set; }

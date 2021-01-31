@@ -4,14 +4,16 @@ using HomeDoctor.Data.DBContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HomeDoctor.Data.Migrations
 {
     [DbContext(typeof(HomeDoctorContext))]
-    partial class HomeDoctorContextModelSnapshot : ModelSnapshot
+    [Migration("20210130163359_updateDB-10")]
+    partial class updateDB10
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

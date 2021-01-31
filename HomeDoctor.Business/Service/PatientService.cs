@@ -34,6 +34,7 @@ namespace HomeDoctor.Business.Service
                 {
                     var patientInfor = new PatientInformation()
                     {
+                        PatientId = patientId,
                         Address = patient.Account.Address,
                         DateOfBirth = patient.Account.DateOfBirth,
                         Email = patient.Account.Email,

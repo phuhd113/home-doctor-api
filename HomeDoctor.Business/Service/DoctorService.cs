@@ -37,6 +37,7 @@ namespace HomeDoctor.Business.Service
             {
                 var doctorInfor = new DoctorInformation()
                 {
+                    DoctorId = tmp.DoctorId,
                     DateOfBirth = tmp.Account.DateOfBirth,
                     Email = tmp.Account.Email,
                     FullName = tmp.Account.FullName,
@@ -49,14 +50,14 @@ namespace HomeDoctor.Business.Service
             return null;
         }
 
-        public async Task<bool> Login(string username, string password)
+        public async Task<Doctor> Login(string username, string password)
         {
-            var check = _repo.GetDbSet().FirstOrDefaultAsync(x => x.Username.Equals(username) && x.Password.Equals(password)).Result;        
+            var check = await _repo.GetDbSet().FirstOrDefaultAsync(x => x.Username.Equals(username) && x.Password.Equals(password));        
             if(check != null)
             {
-                return true;
+                return check;
             }
-            return false;
+            return null;
         }
     }
 }

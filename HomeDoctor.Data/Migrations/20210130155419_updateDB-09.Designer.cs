@@ -4,35 +4,22 @@ using HomeDoctor.Data.DBContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HomeDoctor.Data.Migrations
 {
     [DbContext(typeof(HomeDoctorContext))]
-    partial class HomeDoctorContextModelSnapshot : ModelSnapshot
+    [Migration("20210130155419_updateDB-09")]
+    partial class updateDB09
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.1");
-
-            modelBuilder.Entity("ContractDisease", b =>
-                {
-                    b.Property<int>("ContractsContractId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("DiseasesDiseaseId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("ContractsContractId", "DiseasesDiseaseId");
-
-                    b.HasIndex("DiseasesDiseaseId");
-
-                    b.ToTable("ContractDisease");
-                });
 
             modelBuilder.Entity("HomeDoctor.Data.Models.Account", b =>
                 {
@@ -112,9 +99,6 @@ namespace HomeDoctor.Data.Migrations
                     b.Property<string>("FullNamePatient")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("LicenseId")
-                        .HasColumnType("int");
-
                     b.Property<string>("NameLicense")
                         .HasColumnType("nvarchar(max)");
 
@@ -143,8 +127,6 @@ namespace HomeDoctor.Data.Migrations
 
                     b.HasIndex("DoctorId");
 
-                    b.HasIndex("LicenseId");
-
                     b.HasIndex("PatientId");
 
                     b.ToTable("Contract");
@@ -155,6 +137,9 @@ namespace HomeDoctor.Data.Migrations
                     b.Property<string>("DiseaseId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int?>("ContractId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -162,6 +147,8 @@ namespace HomeDoctor.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("DiseaseId");
+
+                    b.HasIndex("ContractId");
 
                     b.ToTable("Disease");
                 });
@@ -298,21 +285,6 @@ namespace HomeDoctor.Data.Migrations
                     b.ToTable("Role");
                 });
 
-            modelBuilder.Entity("ContractDisease", b =>
-                {
-                    b.HasOne("HomeDoctor.Data.Models.Contract", null)
-                        .WithMany()
-                        .HasForeignKey("ContractsContractId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HomeDoctor.Data.Models.Disease", null)
-                        .WithMany()
-                        .HasForeignKey("DiseasesDiseaseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("HomeDoctor.Data.Models.Account", b =>
                 {
                     b.HasOne("HomeDoctor.Data.Models.Role", "Role")
@@ -330,10 +302,6 @@ namespace HomeDoctor.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HomeDoctor.Data.Models.License", "License")
-                        .WithMany()
-                        .HasForeignKey("LicenseId");
-
                     b.HasOne("HomeDoctor.Data.Models.Patient", "Patient")
                         .WithMany()
                         .HasForeignKey("PatientId")
@@ -342,9 +310,14 @@ namespace HomeDoctor.Data.Migrations
 
                     b.Navigation("Doctor");
 
-                    b.Navigation("License");
-
                     b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.Disease", b =>
+                {
+                    b.HasOne("HomeDoctor.Data.Models.Contract", null)
+                        .WithMany("Diseases")
+                        .HasForeignKey("ContractId");
                 });
 
             modelBuilder.Entity("HomeDoctor.Data.Models.Doctor", b =>
@@ -378,6 +351,11 @@ namespace HomeDoctor.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.Contract", b =>
+                {
+                    b.Navigation("Diseases");
                 });
 
             modelBuilder.Entity("HomeDoctor.Data.Models.Patient", b =>

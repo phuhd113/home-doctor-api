@@ -10,13 +10,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HomeDoctor.Api.Controllers
 {
-    [Route("api/v1/[controller]s")]
+    [Route("api/v1/[controller]")]
     [ApiController]
-    public class PatientController : ControllerBase
+    public class PatientsController : ControllerBase
     {
         private readonly IPatientService _patientSer;
 
-        public PatientController(IPatientService patientSer)
+        public PatientsController(IPatientService patientSer)
         {
             _patientSer = patientSer;
         }

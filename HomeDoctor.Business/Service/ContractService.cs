@@ -16,7 +16,7 @@ namespace HomeDoctor.Business.Service
 {
     public class ContractService : IContractService
     {
-        private IRepositoryBase<Contract> _repo;
+        private readonly IRepositoryBase<Contract> _repo;
         private readonly IUnitOfWork _uow;
 
         public ContractService(IUnitOfWork uow)
@@ -25,9 +25,9 @@ namespace HomeDoctor.Business.Service
             _repo = _uow.GetRepository<Contract>();
         }
 
-        public async Task<bool> CreateContractByPatient(ContractCreation contractCre,PatientInformation patient, DoctorInformation doctor)
+        public async Task<bool> CreateContractByPatient(ContractCreation contractCre, PatientInformation patient, DoctorInformation doctor, License license, ICollection<Disease> diseases)
         {
-            if(contractCre != null)
+            if (contractCre != null)
             {
                 Contract contract = new Contract()
                 {
@@ -35,49 +35,100 @@ namespace HomeDoctor.Business.Service
                     FullNameDoctor = doctor.FullName,
                     DOBDoctor = doctor.DateOfBirth,
                     PhoneNumberDoctor = doctor.Phone,
-                    WorkLocationDoctor = doctor.WorkLocation,                    
+                    WorkLocationDoctor = doctor.WorkLocation,
                     PatientId = contractCre.PatientId,
                     AddressPatient = patient.Address,
                     DOBPatient = patient.DateOfBirth,
                     FullNamePatient = patient.FullName,
                     PhoneNumberPatient = patient.PhoneNumber,
                     ContractCode = this.GenerateContractCode(contractCre.DoctorId, contractCre.PatientId),
-                    DateCreated = DateTime.UtcNow.ToLocalTime(),
+                    DateCreated = DateTime.UtcNow.ToLocalTime().AddHours(-1),
                     DateStarted = contractCre.DateStarted,
-                    DateFinished = contractCre.DateStarted.AddDays(contractCre.DaysOfTracking),
-                    Reason = contractCre.Reason,
+                    DateFinished = contractCre.DateStarted.AddDays(license.Days),
+                    Note = contractCre.Note,
                     Status = "PENDING",
-                    DaysOfTracking =contractCre.DaysOfTracking
+                    LicenseId = license.LicenseId,
+                    DaysOfTracking = license.Days,
+                    NameLicense = license.Name,
+                    PriceLicense = license.Price,
+                    Diseases = diseases
                 };
-                 var check = await _repo.Insert(contract);
+                var check = await _repo.Insert(contract);
                 if (check)
                 {
                     await _uow.CommitAsync();
                     return true;
-                }              
+                }
             }
             return false;
         }
 
-        public async Task<ICollection<ContractInformation>> GetContractOfDoctorByStatus(int doctorId, string status)
+        public async Task<ICollection<ContractInformation>> GetContractsByStatus(int? doctorId, int? patientId, string? status)
         {
-            if(doctorId != 0 && !String.IsNullOrEmpty(status))
+            if (!String.IsNullOrEmpty(status))
             {
                 var contracts = _repo.GetDbSet().
-                    Where(x => x.DoctorId == doctorId && x.Status.Equals(status.ToUpper())).
+                    Where(x => (doctorId != null ? doctorId == x.DoctorId : patientId == x.PatientId) && x.Status.Equals(status.ToUpper())).Include(x => x.Diseases).
                     Include(x => x.Doctor).Include(x => x.Patient).ThenInclude(x => x.Account).
                     OrderBy(x => x.DateCreated).
-                    Select(x => new ContractInformation() {
-                    ContractCode =x.ContractCode,
-                    DateCreated = x.DateCreated,
-                    DaysOfTracking = x.DaysOfTracking,
-                    FullName = x.Patient.Account.FullName,
-                    PatientId = x.PatientId,
-                    PhoneNumber = x.Patient.Account.PhoneNumber,
-                    Reason = x.Reason,
-                    Status = x.Status
+                    Select(x => new ContractInformation()
+                    {
+                        //contract
+                        ContractId = x.ContractId,
+                        ContractCode = x.ContractCode,
+                        DateCreated = x.DateCreated,
+                        DateFinished = x.DateFinished,
+                        DateStarted = x.DateStarted,
+                        Status = x.Status,
+                        //license
+                        NameLicense = x.NameLicense,
+                        PriceLicense = x.PriceLicense,
+                        DaysOfTracking = x.DaysOfTracking,
+                        //Doctor
+                        FullNamePatient = x.Patient.Account.FullName,
+                        PhoneNumberPatient = x.Patient.Account.PhoneNumber,
+                        //Patient
+                        FullNameDoctor = x.Doctor.Account.FullName,
+                        PhoneNumberDoctor = x.Doctor.Account.PhoneNumber,
+                        //Disease
+                        Diseases = x.Diseases,
+                        Note = x.Note                    
                     });
-                if(contracts.Count() != 0)
+                if (contracts.Count() != 0)
+                {
+                    return contracts.ToList();
+                }
+            }
+            else
+            {
+                var contracts = _repo.GetDbSet().
+                   Where(x => (doctorId != null ? doctorId == x.DoctorId : patientId == x.PatientId)).
+                   Include(x => x.Doctor).Include(x => x.Patient).ThenInclude(x => x.Account).
+                   OrderBy(x => x.DateCreated).
+                   Select(x => new ContractInformation()
+                   {
+                       //contract
+                       ContractId = x.ContractId,
+                       ContractCode = x.ContractCode,
+                       DateCreated = x.DateCreated,
+                       DateFinished = x.DateFinished,
+                       DateStarted = x.DateStarted,
+                       Status = x.Status,
+                       //license
+                       NameLicense = x.NameLicense,
+                       PriceLicense = x.PriceLicense,
+                       DaysOfTracking = x.DaysOfTracking,
+                       //Doctor
+                       FullNamePatient = x.Patient.Account.FullName,
+                       PhoneNumberPatient = x.Patient.Account.PhoneNumber,
+                       //Patient
+                       FullNameDoctor = x.Doctor.Account.FullName,
+                       PhoneNumberDoctor = x.Doctor.Account.PhoneNumber,
+                       //Disease
+                       Diseases = x.Diseases,
+                       Note = x.Note
+                   });
+                if (contracts.Count() != 0)
                 {
                     return contracts.ToList();
                 }
@@ -86,7 +137,7 @@ namespace HomeDoctor.Business.Service
         }
         public async Task<bool> CheckContractToCreateNew(int doctorId, int patientId)
         {
-            if(doctorId != 0 && patientId != 0)
+            if (doctorId != 0 && patientId != 0)
             {
                 var tmp = _repo.GetDbSet().Where(x => x.DoctorId == doctorId && x.PatientId == patientId).
                     Any(x => x.Status.Equals("PENDING") || x.Status.Equals("ACTIVE"));
@@ -98,11 +149,57 @@ namespace HomeDoctor.Business.Service
         public string GenerateContractCode(int doctorId, int patientId)
         {
             var dateTime = DateTime.UtcNow.ToLocalTime();
-            string contractCode = "HDR"+dateTime.Year.ToString() +
+            string contractCode = "HDR" + dateTime.Year.ToString() +
                 dateTime.Month.ToString() +
                 dateTime.Day.ToString() +
                 doctorId + patientId;
             return contractCode;
+        }
+
+        public async Task<bool> UpdateStatuByDoctor(int contractId, DateTime? dateStarted, int? daysOfTracking, string status)
+        {
+            if (contractId != 0)
+            {
+                var contract = _repo.GetById(contractId).Result;
+                if (contract != null)
+                {
+                    if (dateStarted != null)
+                    {
+                        contract.DateStarted = dateStarted.Value;
+                        contract.DateFinished = contract.DateStarted.AddDays(contract.DaysOfTracking);
+                    }
+
+                    if (daysOfTracking != null)
+                    {
+                        contract.DaysOfTracking = daysOfTracking.Value;
+                        contract.DateFinished = contract.DateStarted.AddDays(daysOfTracking.Value);
+                    }
+                    if (!string.IsNullOrEmpty(status) && !contract.Status.Equals(status.ToUpper()))
+                    {
+                        contract.Status = status.ToUpper();
+                    }
+                    var check = await _repo.Update(contract);
+                    if (check)
+                    {
+                        await _uow.CommitAsync();
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public async Task<Contract> GetContractByContractId(int? contractId)
+        {
+            if (contractId != 0)
+            {
+                var contract = _repo.GetById(contractId).Result;
+                if (contract != null)
+                {
+                    return contract;
+                }
+            }
+            return null;
         }
     }
 }

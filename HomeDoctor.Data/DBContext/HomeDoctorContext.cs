@@ -57,6 +57,8 @@ namespace HomeDoctor.Data.DBContext
         public DbSet<Doctor> Doctor { get; set; }
         public DbSet<Patient> Patient { get; set; }
         public DbSet<Relative> Relative { get; set; }
+        public DbSet<License> License { get; set; }
+        public DbSet<Disease> Disease { get; set; }
 
 
 

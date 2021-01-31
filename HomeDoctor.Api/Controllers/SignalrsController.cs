@@ -13,12 +13,12 @@ namespace HomeDoctor.Api.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class SignalrController : ControllerBase
+    public class SignalrsController : ControllerBase
     {
         private readonly IHubContext<SignalrHub, IHubClient> _signalrHub;
         private readonly IPatientService _patientService;
 
-        public SignalrController(IHubContext<SignalrHub, IHubClient> signalrHub, IPatientService patientService)
+        public SignalrsController(IHubContext<SignalrHub, IHubClient> signalrHub, IPatientService patientService)
         {
             _signalrHub = signalrHub;
             _patientService = patientService;

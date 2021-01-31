@@ -4,32 +4,42 @@
         <name>HomeDoctor.Api</name>
     </assembly>
     <members>
-        <member name="M:HomeDoctor.Api.Controllers.ContractController.CreateContractByPatient(HomeDoctor.Business.ViewModel.RequestModel.ContractCreation)">
+        <member name="M:HomeDoctor.Api.Controllers.ContractsController.CreateContractByPatient(HomeDoctor.Business.ViewModel.RequestModel.ContractCreation)">
             <summary>
             Patient request contract with status "Pending"
             </summary>
         </member>
-        <member name="M:HomeDoctor.Api.Controllers.ContractController.GetContractOfDoctorByStatus(System.Int32,System.String)">
+        <member name="M:HomeDoctor.Api.Controllers.ContractsController.GetContractByStatus(System.Nullable{System.Int32},System.Nullable{System.Int32},System.String)">
             <summary>
-            Get contract of Doctor by status
+            Get contract by status
             </summary>
         </member>
-        <member name="M:HomeDoctor.Api.Controllers.DoctorController.Login(HomeDoctor.Business.ViewModel.RequestModel.LoginDoctor)">
+        <member name="M:HomeDoctor.Api.Controllers.ContractsController.ApproveConractByDoctor(System.Int32,System.String,System.Nullable{System.DateTime},System.Nullable{System.Int32})">
+            <summary>
+            Doctor approve  1 contract with can update status or time.
+            </summary>
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.ContractsController.GetContractById(System.Int32)">
+            <summary>
+            Get contract by id
+            </summary>
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.DoctorsController.Login(HomeDoctor.Business.ViewModel.RequestModel.LoginDoctor)">
             <summary>
             Login of Doctor with username and password.
             </summary>
         </member>
-        <member name="M:HomeDoctor.Api.Controllers.DoctorController.GetDoctorInformationByUsername(System.String)">
+        <member name="M:HomeDoctor.Api.Controllers.DoctorsController.GetDoctorInformationByUsername(System.String)">
             <summary>
             Get Doctor by username
             </summary>
         </member>
-        <member name="M:HomeDoctor.Api.Controllers.DoctorController.GetDoctorInformationById(System.Int32)">
+        <member name="M:HomeDoctor.Api.Controllers.DoctorsController.GetDoctorInformationById(System.Int32)">
             <summary>
             Get Doctor by Id
             </summary>      
         </member>
-        <member name="M:HomeDoctor.Api.Controllers.PatientController.GetPatientById(System.Int32)">
+        <member name="M:HomeDoctor.Api.Controllers.PatientsController.GetPatientById(System.Int32)">
             <summary>
             Get Information of Patient by Id.
             </summary>
