@@ -8,6 +8,6 @@ namespace HomeDoctor.Api.Signalr
 {
     public interface IHubClient
     {
-        public Task BroadCastScanQR(PatientInformation patient);
+        public Task SendNotificationNewContract(PatientInformation patient);
     }
 }

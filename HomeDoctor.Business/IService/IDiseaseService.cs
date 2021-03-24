@@ -1,4 +1,5 @@
-﻿using HomeDoctor.Data.Models;
+﻿using HomeDoctor.Business.ViewModel.ResponeModel;
+using HomeDoctor.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +9,12 @@ namespace HomeDoctor.Business.IService
 {
     public interface IDiseaseService
     {
-        public Task<ICollection<Disease>> GetDiseases(string? status);
-        public Task<Disease> GetDiseaseById(string diseaseId);
+        public Task<ICollection<DiseaseRespone>> GetDiseases();
+        public Task<DiseaseRespone> GetDiseaseById(string diseaseId);
+        public Task<bool> InsertDisease(string diseaseId, string code, int? number, int? start, int? end, string name);
+
+        public Task<ICollection<DiseaseByPatientRespone>> GetHeartDiseases();
+
+        public Task<ICollection<DiseaseByPatientRespone>> GetDiseasesToCreateContract(int patientId);
     }
 }

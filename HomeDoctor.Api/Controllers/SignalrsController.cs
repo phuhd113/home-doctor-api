@@ -16,21 +16,22 @@ namespace HomeDoctor.Api.Controllers
     public class SignalrsController : ControllerBase
     {
         private readonly IHubContext<SignalrHub, IHubClient> _signalrHub;
-        private readonly IPatientService _patientService;
+        private readonly IPatientService _serPatient;
 
-        public SignalrsController(IHubContext<SignalrHub, IHubClient> signalrHub, IPatientService patientService)
+        public SignalrsController(IHubContext<SignalrHub, IHubClient> signalrHub, IPatientService serPatient)
         {
             _signalrHub = signalrHub;
-            _patientService = patientService;
+            _serPatient = serPatient;
         }
+
         [HttpGet("{patientId:int}")]
         [Authorize]
         public async Task<IActionResult> SendContractInformation(int patientId)
         {
-            var patient = _patientService.GetPatientInformation(patientId).Result;
+            var patient = _serPatient.GetPatientInformation(patientId).Result;
             if(patient != null)
             {
-                await _signalrHub.Clients.All.BroadCastScanQR(patient);
+                await _signalrHub.Clients.All.SendNotificationNewContract(patient);
                 return Ok(patient);
             }
             return NotFound();

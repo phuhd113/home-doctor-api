@@ -4,6 +4,27 @@
         <name>HomeDoctor.Api</name>
     </assembly>
     <members>
+        <member name="M:HomeDoctor.Api.Controllers.AppointmentsController.GetAppointmentForMonth(System.Int32,System.Nullable{System.DateTime})">
+            <summary>
+            Get AppointMent for the month of patient or doctor.
+            </summary>
+            <param name="month">2021/03</param>
+            <returns></returns>
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.AppointmentsController.UpdateAppointment(System.Int32,System.Nullable{System.DateTime},System.String,System.Int32)">
+            <summary>
+            Update appointment.DateExamination from Doctor when status "PENDING". status "ACTIVE" from Patient
+            </summary>
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.AppointmentsController.CancelAppointmentByPatient(System.Int32,System.String,System.String)">
+            <summary>
+            Patient cancel appointment wit reasonCancel.
+            </summary>
+            <param name="appointmentId"></param>
+            <param name="status"> Doctor cancel with status "CANCELD" . Patient cancel with status "CANCELP"</param>
+            <param name="reasonCancel"></param>
+            <returns></returns>
+        </member>
         <member name="M:HomeDoctor.Api.Controllers.ContractsController.CreateContractByPatient(HomeDoctor.Business.ViewModel.RequestModel.ContractCreation)">
             <summary>
             Patient request contract with status "Pending"
@@ -14,9 +35,9 @@
             Get contract by status
             </summary>
         </member>
-        <member name="M:HomeDoctor.Api.Controllers.ContractsController.ApproveConractByDoctor(System.Int32,System.String,System.Nullable{System.DateTime},System.Nullable{System.Int32})">
+        <member name="M:HomeDoctor.Api.Controllers.ContractsController.UpdateContract(System.Int32,System.Int32,System.Int32,System.String,System.Nullable{System.DateTime},System.Nullable{System.Int32})">
             <summary>
-            Doctor approve  1 contract with can update status or time.
+            Update Status of Contract .Doctor update status "APPROVED" or "CANCELD".Patient update status "ACTIVE" or "CANCELP".
             </summary>
         </member>
         <member name="M:HomeDoctor.Api.Controllers.ContractsController.GetContractById(System.Int32)">
@@ -24,14 +45,19 @@
             Get contract by id
             </summary>
         </member>
-        <member name="M:HomeDoctor.Api.Controllers.DoctorsController.Login(HomeDoctor.Business.ViewModel.RequestModel.LoginDoctor)">
+        <member name="M:HomeDoctor.Api.Controllers.DiseasesController.GetDiseases">
             <summary>
-            Login of Doctor with username and password.
+            Get All Disease .
             </summary>
         </member>
-        <member name="M:HomeDoctor.Api.Controllers.DoctorsController.GetDoctorInformationByUsername(System.String)">
+        <member name="M:HomeDoctor.Api.Controllers.DiseasesController.InsertDisease(System.String,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},System.String)">
             <summary>
-            Get Doctor by username
+            Insert Disease .
+            </summary>
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.DiseasesController.GetHeartDiseases">
+            <summary>
+            Get Heart Disease .
             </summary>
         </member>
         <member name="M:HomeDoctor.Api.Controllers.DoctorsController.GetDoctorInformationById(System.Int32)">
@@ -39,10 +65,110 @@
             Get Doctor by Id
             </summary>      
         </member>
+        <member name="M:HomeDoctor.Api.Controllers.FireBasesController.SaveTokenDevice(System.Int32,System.String)">
+            <summary>
+            Save token of patient or doctor when Login success.
+            </summary>    
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.HealthRecordsController.GetHealthRecordByPatientId(System.Int32,System.Nullable{System.Boolean})">
+            <summary>
+            Get Healthrecords by PatientId. onSystem =true get HR System. onSystem=null getAll.
+            </summary>
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.HealthRecordsController.GetHealthRecordById(System.Int32)">
+            <summary>
+            Get HealthRecord Detail by Id.
+            </summary>
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.HealthRecordsController.CreateHealthRecord(HomeDoctor.Business.ViewModel.RequestModel.HealthRecordCreate)">
+            <summary>
+            Patient create a Healthrecord to save medical Instruction Old.
+            </summary>
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.ImagesController.GetImageByPath(System.String)">
+            <summary>
+            Load Image by Path Image
+            </summary>    
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.LicensesController.GetLicenses(System.String)">
+            <summary>
+            Get Licenses by status.status = null to getAll
+            </summary>
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.MedicalInstructionsController.InsertMedicalInstructionOld(HomeDoctor.Business.ViewModel.RequestModel.MedicalInstructionCreate,Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            Create medical instruction old with image
+            </summary>
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.MedicalInstructionsController.GetMedicalInstructionById(System.Int32)">
+            <summary>
+            Get Medical Instruction by Id
+            </summary>      
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.MedicalInstructionsController.GetMedicalInstructionToCreateContract(System.Int32,System.Collections.Generic.ICollection{System.String},System.Int32)">
+            <summary>
+            Get All Medical Instruction of Health Record have the same DieaseId .
+            </summary>      
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.MedicalInstructionsController.GetMedicalInstructionsByHealthRecordId(System.Int32)">
+            <summary>
+            Get MedicalInstrucs of Patient by HealthRecordId. 
+            </summary>     
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.MedicalInstructionSharesController.GetMedicalInstructionShare(System.Int32)">
+            <summary>
+            Get Medical InstructionShared by contractId
+            </summary>   
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.MedicalInstructionSharesController.ShareMedicalInstruction(System.Int32,System.Collections.Generic.ICollection{System.Int32})">
+            <summary>
+            Patient share medicalInstructions with Doctor from contractID
+            </summary>   
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.MedicalInstructrionTypesController.GetMedicalInstructionTypeByStatus(System.String)">
+            <summary>
+            Get MedicalInstruoctionType by status(active or cancel)
+            </summary>
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.NotificationsController.GetNotificationByAccountId(System.Int32)">
+            <summary>
+            Get list notification by accountId. Sort by DateCreate
+            </summary>      
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.NotificationsController.UpdateStatusNotificationByNotiId(System.Int32)">
+            <summary>
+            Update status of notification when SEEN.
+            </summary>      
+        </member>
         <member name="M:HomeDoctor.Api.Controllers.PatientsController.GetPatientById(System.Int32)">
             <summary>
             Get Information of Patient by Id.
             </summary>
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.PatientsController.GetPatientTrackingByDoctor(System.Int32)">
+            <summary>
+            Get patient's information Tracking by doctor with contract status "ACTIVE" by doctorID
+            </summary>
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.PersonalHealthReocrdsController.UpdateSmartWatchConnect(System.Int32,System.Boolean)">
+            <summary>
+            Update when connect smart watch or disconect
+            </summary>
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.PrescriptionController.CreatePrescription(HomeDoctor.Business.ViewModel.RequestModel.MIPresciption)">
+            <summary>
+            Create Precription with MedicalInstructiontype = 1 (Medication Schedule).Doctor in the system.
+            </summary>
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.PrescriptionController.UpdatePrecription(System.Int32,System.String,System.String,System.Collections.Generic.ICollection{HomeDoctor.Business.ViewModel.RequestModel.MIPresciption.MedicationSchedule})">
+            <summary>
+            Create Precription with MedicalInstructiontype = 1 (Medication Schedule).Doctor in the system.
+            </summary>
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.PrescriptionController.GetPrescriptionByPatientId(System.Int32,System.Nullable{System.Int32})">
+            <summary>
+            Patient Get Prescription by PatientId,Doctor add HealthRecordId.MedicalInsructionType = 1
+            </summary>      
         </member>
     </members>
 </doc>

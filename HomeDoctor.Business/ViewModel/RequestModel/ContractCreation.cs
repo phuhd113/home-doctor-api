@@ -14,9 +14,9 @@ namespace HomeDoctor.Business.ViewModel.RequestModel
         public int PatientId { get; set; }       
         [Required]
         public DateTime DateStarted { get; set; }
-        [Required]
-        public int LicenseId { get; set; }
         public ICollection<string> DiseaseIds { get; set; }
-        public string? Note { get; set; }
+        public ICollection<int> MedicalInstructionIds { get; set; }
+        public string? Note { get; set; }       
+
     }
 }

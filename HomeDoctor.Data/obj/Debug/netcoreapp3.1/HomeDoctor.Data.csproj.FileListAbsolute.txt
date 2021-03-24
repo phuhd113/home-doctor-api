@@ -1,10 +1,10 @@
 F:\CN10_Capstone\HomeDoctor\HomeDoctor.Data\bin\Debug\netcoreapp3.1\HomeDoctor.Data.deps.json
-F:\CN10_Capstone\HomeDoctor\HomeDoctor.Data\bin\Debug\netcoreapp3.1\HomeDoctor.Data.dll
-F:\CN10_Capstone\HomeDoctor\HomeDoctor.Data\obj\Debug\netcoreapp3.1\HomeDoctor.Data.AssemblyInfoInputs.cache
-F:\CN10_Capstone\HomeDoctor\HomeDoctor.Data\obj\Debug\netcoreapp3.1\HomeDoctor.Data.AssemblyInfo.cs
 F:\CN10_Capstone\HomeDoctor\HomeDoctor.Data\bin\Debug\netcoreapp3.1\HomeDoctor.Data.runtimeconfig.json
 F:\CN10_Capstone\HomeDoctor\HomeDoctor.Data\bin\Debug\netcoreapp3.1\HomeDoctor.Data.runtimeconfig.dev.json
+F:\CN10_Capstone\HomeDoctor\HomeDoctor.Data\bin\Debug\netcoreapp3.1\HomeDoctor.Data.dll
 F:\CN10_Capstone\HomeDoctor\HomeDoctor.Data\bin\Debug\netcoreapp3.1\HomeDoctor.Data.pdb
+F:\CN10_Capstone\HomeDoctor\HomeDoctor.Data\obj\Debug\netcoreapp3.1\HomeDoctor.Data.AssemblyInfoInputs.cache
+F:\CN10_Capstone\HomeDoctor\HomeDoctor.Data\obj\Debug\netcoreapp3.1\HomeDoctor.Data.AssemblyInfo.cs
 F:\CN10_Capstone\HomeDoctor\HomeDoctor.Data\obj\Debug\netcoreapp3.1\HomeDoctor.Data.csproj.CoreCompileInputs.cache
 F:\CN10_Capstone\HomeDoctor\HomeDoctor.Data\obj\Debug\netcoreapp3.1\HomeDoctor.Data.dll
 F:\CN10_Capstone\HomeDoctor\HomeDoctor.Data\obj\Debug\netcoreapp3.1\HomeDoctor.Data.pdb

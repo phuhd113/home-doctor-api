@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using HomeDoctor.Api.Signalr;
 using HomeDoctor.Business.IService;
+using HomeDoctor.Business.Quartz;
+using HomeDoctor.Business.Quartz.Jobs;
 using HomeDoctor.Business.Service;
 using HomeDoctor.Business.UnitOfWork;
 using HomeDoctor.Data.DBContext;
@@ -20,6 +22,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Quartz;
+using Quartz.Impl;
+using Quartz.Spi;
 
 namespace HomeDoctor.Api
 {
@@ -38,7 +43,8 @@ namespace HomeDoctor.Api
         public void ConfigureServices(IServiceCollection services)
         {
             var sqlConnectionString = Configuration.GetConnectionString("MySqlConnection");
-            services.AddDbContext<HomeDoctorContext>(options =>
+            services.AddDbContext<HomeDoctorContext>(
+                options =>
               options.UseSqlServer(sqlConnectionString)
           );
             services.AddControllers();
@@ -54,7 +60,8 @@ namespace HomeDoctor.Api
                                   });
             });
             services.AddSignalR();
-           services.AddSwaggerGen(swagger =>
+            services.AddHostedService<QuartzHostedService>();
+            services.AddSwaggerGen(swagger =>
            {
                //This is to generate the Default UI of Swagger Documentation  
                swagger.SwaggerDoc("v1", new OpenApiInfo
@@ -116,14 +123,40 @@ namespace HomeDoctor.Api
 
             // register dependecy injection
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IPatientService, PatientService>();
             services.AddScoped<IDoctorService, DoctorService>();
             services.AddScoped<IContractService, ContractService>();
             services.AddScoped<ILicenseService, LicenseService>();
             services.AddScoped<IDiseaseService, DiseaseService>();
+            services.AddScoped<IMedicalInstructionService, MedicalInstructionService>();
+            services.AddScoped<IMedicalInstructionTypeService, MedicalInstructionTypeService>();
+            services.AddScoped<IHealthRecordService, HealthRecordService>();
+            services.AddScoped<IImageService, ImageService>();
+            services.AddScoped<IMedicalInstructionShareService, MedicalInstructionShareService>();
+            services.AddScoped<IFirebaseFCMService, FirebaseFCMService>();
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IAppointmentService, AppointmentService>();
+            services.AddScoped<IPersonalHealthRecordService, PersonalHealthRecordService>();
+            services.AddScoped<IActionService, ActionService>();
+           
+            // add Quartz serivce
+            services.AddSingleton<IJobFactory, SingletonJobFactory>();
+            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
 
-            
+            //add Job
+            services.AddSingleton<HelloWordJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(HelloWordJob),
+                cronExpression: "0 18 1 ? * *")); // run every 5 seconds
+
+            services.AddSingleton<ActionFirstTimeJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(ActionFirstTimeJob),
+                cronExpression: "0 57 14 ? * *"));
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -133,7 +166,7 @@ namespace HomeDoctor.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseStaticFiles();
             app.UseRouting();
             app.UseCors(MyAllowSpecificOrigins);
 

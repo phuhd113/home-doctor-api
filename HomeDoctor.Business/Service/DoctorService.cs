@@ -22,41 +22,31 @@ namespace HomeDoctor.Business.Service
             _repo = _uow.GetRepository<Doctor>();
         }
 
-        public async Task<DoctorInformation> GetDoctorInformation(string? username, int? doctorId)
-        {
-            Doctor tmp = null;
-            if (username != null)
-            {
-                tmp = _repo.GetDbSet().Include(x => x.Account).FirstOrDefaultAsync(x => x.Username.Equals(username)).Result;
-            }
+        public async Task<DoctorInformation> GetDoctorInformation(int doctorId)
+        {    
             if(doctorId != 0)
             {
-                tmp = _repo.GetDbSet().Include(x => x.Account).FirstOrDefaultAsync(x => x.DoctorId == doctorId).Result;
-            }           
-            if (tmp != null)
-            {
-                var doctorInfor = new DoctorInformation()
+                var doctor = await _repo.GetDbSet().Include(x => x.Account).FirstOrDefaultAsync(x => x.DoctorId == doctorId);
+                if (doctor != null)
                 {
-                    DoctorId = tmp.DoctorId,
-                    DateOfBirth = tmp.Account.DateOfBirth,
-                    Email = tmp.Account.Email,
-                    FullName = tmp.Account.FullName,
-                    Phone = tmp.Account.PhoneNumber,
-                    Username = tmp.Username,
-                    WorkLocation = tmp.WorkLocation
-                };
-                return doctorInfor;
-            } 
-            return null;
-        }
-
-        public async Task<Doctor> Login(string username, string password)
-        {
-            var check = await _repo.GetDbSet().FirstOrDefaultAsync(x => x.Username.Equals(username) && x.Password.Equals(password));        
-            if(check != null)
-            {
-                return check;
-            }
+                    var doctorInfor = new DoctorInformation()
+                    {
+                        DoctorId = doctor.DoctorId,
+                        AccountId = doctor.AccountId,
+                        DateOfBirth = doctor.Account.DateOfBirth,
+                        Email = doctor.Account.Email,
+                        FullName = doctor.Account.FullName,
+                        Phone = doctor.Account.PhoneNumber,
+                        Username = doctor.Account.Username,
+                        WorkLocation = doctor.WorkLocation,
+                        Experience = doctor.Experience,
+                        Details = doctor.Details,
+                        Specialization = doctor.Specialization,
+                        Address = doctor.Account.Address                      
+                    };
+                    return doctorInfor;
+                }
+            }               
             return null;
         }
     }

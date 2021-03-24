@@ -13,27 +13,42 @@ namespace HomeDoctor.Api.Controllers
     [ApiController]
     public class LicensesController : ControllerBase
     {
-        private readonly ILicenseService _licenseSer;
+        private readonly ILicenseService _serLicense;
 
-        public LicensesController(ILicenseService licenseSer)
+        public LicensesController(ILicenseService serLicense)
         {
-            _licenseSer = licenseSer;
+            _serLicense = serLicense;
         }
+
+
         /// <summary>
         /// Get Licenses by status.status = null to getAll
         /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetLicenses(string? status)
         {
-            var licenses = _licenseSer.GetLicensesByStatus(status);
-            if (licenses.Result != null)
+            var licenses = await _serLicense.GetLicensesByStatus(status);
+            if (licenses != null)
             {
-                return Ok(licenses.Result);
+                return Ok(licenses);
+            }
+            return NotFound();
+        }
+        [HttpGet("GetLicenseByDays")]
+        public async Task<IActionResult> GetLicenseByDays(int days)
+        {
+            if(days != 0)
+            {
+                var license = await _serLicense.GetLicenseByDays(days);
+                if(license != null)
+                {
+                    return Ok(license);
+                }
             }
             return NotFound();
         }
         [HttpPost]
-        public async Task<IActionResult> AddLicense(string name,int days,float price,string description)
+        public async Task<IActionResult> CreateLicense(string name,int days,float price,string description)
         {
             var license = new License()
             {
@@ -43,8 +58,8 @@ namespace HomeDoctor.Api.Controllers
                 Description = description,
                 Status = "active"
             };
-            var tmp = _licenseSer.AddLicense(license);
-            if (tmp.Result)
+            var tmp = await _serLicense.CreateLicense(license);
+            if (tmp)
             {
                 return StatusCode(201);
             }
@@ -53,8 +68,8 @@ namespace HomeDoctor.Api.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateLicense(License lisence)
         {
-            var tmp = _licenseSer.UpdateLicense(lisence);
-            if (tmp.Result)
+            var tmp = await _serLicense.UpdateLicense(lisence);
+            if (tmp)
             {
                 return Ok();
             }
@@ -63,8 +78,8 @@ namespace HomeDoctor.Api.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteLicense(int lisenceId)
         {
-            var tmp = _licenseSer.DeleteLicense(lisenceId);
-            if (tmp.Result)
+            var tmp = await _serLicense.DeleteLicense(lisenceId);
+            if (tmp)
             {
                 return Ok();
             }

@@ -21,7 +21,7 @@ namespace HomeDoctor.Business.Service
             _repo = _uow.GetRepository<License>();
         }
 
-        public async Task<bool> AddLicense(License license)
+        public async Task<bool> CreateLicense(License license)
         {
             if (license != null)
             {
@@ -54,6 +54,19 @@ namespace HomeDoctor.Business.Service
             return false;
         }
 
+        public async Task<License> GetLicenseByDays(int days)
+        {
+            if(days != 0)
+            {
+                var license = _repo.GetDbSet().Where(x => x.Days >= days).OrderBy(x => x.Days).FirstOrDefault();
+                if(license != null)
+                {
+                    return license;
+                }
+            }
+            return null;
+        }
+
         public async Task<License> GetLicenseById(int licenseId)
         {
             if(licenseId != 0)
@@ -61,7 +74,7 @@ namespace HomeDoctor.Business.Service
                 var license = await _repo.GetById(licenseId);
                 if(license != null)
                 {
-                    return license;
+                     return license;
                 }
                 
             }

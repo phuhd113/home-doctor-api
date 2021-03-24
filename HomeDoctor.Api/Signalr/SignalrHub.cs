@@ -12,7 +12,7 @@ namespace HomeDoctor.Api.Signalr
     {
         public async Task BroadCastScanQR(PatientInformation patient)
         {
-            await Clients.All.BroadCastScanQR(patient);
+            await Clients.All.SendNotificationNewContract(patient);
         }
     }
 }

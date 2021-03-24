@@ -9,7 +9,6 @@ namespace HomeDoctor.Business.IService
 {
     public interface IDoctorService
     {
-        public Task<Doctor> Login(string username, string password);
-        public Task<DoctorInformation> GetDoctorInformation(string? username,int? doctorId);
+        public Task<DoctorInformation> GetDoctorInformation(int doctorId);
     }
 }

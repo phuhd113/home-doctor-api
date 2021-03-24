@@ -16,5 +16,7 @@ namespace HomeDoctor.Data.Models
         public int AccountId { get; set; }
         public Account Account { get; set; }
         public ICollection<Relative>? Relatives { get; set; }
+        public PersonalHealthRecord PersonalHealthRecord { get; set; }
+        public ICollection<Contract> Contracts { get; set; }
     }
 }

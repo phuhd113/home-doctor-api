@@ -34,6 +34,21 @@ namespace HomeDoctor.Data.Migrations
                     b.ToTable("ContractDisease");
                 });
 
+            modelBuilder.Entity("DiseaseHealthRecord", b =>
+                {
+                    b.Property<string>("DiseasesDiseaseId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("HealthRecordsHealthRecordId")
+                        .HasColumnType("int");
+
+                    b.HasKey("DiseasesDiseaseId", "HealthRecordsHealthRecordId");
+
+                    b.HasIndex("HealthRecordsHealthRecordId");
+
+                    b.ToTable("DiseaseHealthRecord");
+                });
+
             modelBuilder.Entity("HomeDoctor.Data.Models.Account", b =>
                 {
                     b.Property<int>("AccountId")
@@ -59,11 +74,17 @@ namespace HomeDoctor.Data.Migrations
                     b.Property<string>("Gender")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("RoleId")
+                    b.Property<int>("RoleId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AccountId");
 
@@ -72,12 +93,129 @@ namespace HomeDoctor.Data.Migrations
                     b.ToTable("Account");
                 });
 
+            modelBuilder.Entity("HomeDoctor.Data.Models.ActionEveryDay", b =>
+                {
+                    b.Property<int>("ActionEveryDayId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int?>("ActionEveryWeekId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Examination")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ActionEveryDayId");
+
+                    b.HasIndex("ActionEveryWeekId");
+
+                    b.ToTable("ActionEveryDay");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.ActionEveryWeek", b =>
+                {
+                    b.Property<int>("ActionEveryWeekId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int?>("ActionFirstTimeId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("AppointmentWeek")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("PrescriptionWeek")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("VitalSignWeek")
+                        .HasColumnType("bit");
+
+                    b.HasKey("ActionEveryWeekId");
+
+                    b.HasIndex("ActionFirstTimeId");
+
+                    b.ToTable("ActionEveryWeek");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.ActionFirstTime", b =>
+                {
+                    b.Property<int>("ActionFirstTimeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<bool>("AppointmentFirst")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ContractId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("PrescriptionFirst")
+                        .HasColumnType("bit");
+
+                    b.HasKey("ActionFirstTimeId");
+
+                    b.HasIndex("ContractId")
+                        .IsUnique();
+
+                    b.ToTable("ActionFirstTime");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.Appointment", b =>
+                {
+                    b.Property<int>("AppointmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("ContractId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DateCanceled")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateExamination")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReasonCanceled")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("AppointmentId");
+
+                    b.HasIndex("ContractId");
+
+                    b.ToTable("Appointment");
+                });
+
             modelBuilder.Entity("HomeDoctor.Data.Models.Contract", b =>
                 {
                     b.Property<int>("ContractId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .UseIdentityColumn();
+
+                    b.Property<string>("AddressDoctor")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AddressPatient")
                         .HasColumnType("nvarchar(max)");
@@ -155,11 +293,20 @@ namespace HomeDoctor.Data.Migrations
                     b.Property<string>("DiseaseId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("End")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Number")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Start")
+                        .HasColumnType("int");
 
                     b.HasKey("DiseaseId");
 
@@ -182,13 +329,7 @@ namespace HomeDoctor.Data.Migrations
                     b.Property<string>("Experience")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Specialization")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WorkLocation")
@@ -196,9 +337,63 @@ namespace HomeDoctor.Data.Migrations
 
                     b.HasKey("DoctorId");
 
-                    b.HasIndex("AccountId");
+                    b.HasIndex("AccountId")
+                        .IsUnique();
 
                     b.ToTable("Doctor");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.FireBaseFCM", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.ToTable("FireBaseFCM");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.HealthRecord", b =>
+                {
+                    b.Property<int>("HealthRecordId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int?>("ContractId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PersonalHealthRecordId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Place")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("HealthRecordId");
+
+                    b.HasIndex("ContractId")
+                        .IsUnique()
+                        .HasFilter("[ContractId] IS NOT NULL");
+
+                    b.HasIndex("PersonalHealthRecordId");
+
+                    b.ToTable("HealthRecord");
                 });
 
             modelBuilder.Entity("HomeDoctor.Data.Models.License", b =>
@@ -217,6 +412,9 @@ namespace HomeDoctor.Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("NumberOfExamination")
+                        .HasColumnType("int");
+
                     b.Property<float>("Price")
                         .HasColumnType("real");
 
@@ -226,6 +424,186 @@ namespace HomeDoctor.Data.Migrations
                     b.HasKey("LicenseId");
 
                     b.ToTable("License");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.MedicalInstruction", b =>
+                {
+                    b.Property<int>("MedicalInstructionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("DateCreate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Diagnose")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("HealthRecordId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MedicalInstructionTypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MedicalInstructionId");
+
+                    b.HasIndex("HealthRecordId");
+
+                    b.HasIndex("MedicalInstructionTypeId");
+
+                    b.ToTable("MedicalInstruction");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.MedicalInstructionShare", b =>
+                {
+                    b.Property<int>("MedicalInstructionShareId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("ContractId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MedicalInstructionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MedicalInstructionShareId");
+
+                    b.HasIndex("ContractId");
+
+                    b.HasIndex("MedicalInstructionId");
+
+                    b.ToTable("MedicalInstructionShare");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.MedicalInstructionType", b =>
+                {
+                    b.Property<int>("MedicalInstructionTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MedicalInstructionTypeId");
+
+                    b.ToTable("MedicalInstructionType");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.MedicationSchedule", b =>
+                {
+                    b.Property<int>("MedicationScheduleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("AfterNoon")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MedicationName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Morning")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Night")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Noon")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PrescriptionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UseTime")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MedicationScheduleId");
+
+                    b.HasIndex("PrescriptionId");
+
+                    b.ToTable("MedicationSchedule");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.Notification", b =>
+                {
+                    b.Property<int>("NotificationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AccountSendId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ContractId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("MedicalInstructionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NotificationTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("OnSystem")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.HasKey("NotificationId");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("ContractId");
+
+                    b.HasIndex("MedicalInstructionId");
+
+                    b.HasIndex("NotificationTypeId");
+
+                    b.ToTable("Notification");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.NotificationType", b =>
+                {
+                    b.Property<int>("NotificationTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("Body")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("NotificationTypeId");
+
+                    b.ToTable("NotificationType");
                 });
 
             modelBuilder.Entity("HomeDoctor.Data.Models.Patient", b =>
@@ -255,9 +633,70 @@ namespace HomeDoctor.Data.Migrations
 
                     b.HasKey("PatientId");
 
-                    b.HasIndex("AccountId");
+                    b.HasIndex("AccountId")
+                        .IsUnique();
 
                     b.ToTable("Patient");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.PersonalHealthRecord", b =>
+                {
+                    b.Property<int>("PersonalHealthRecordId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("FamilyMedicalHistory")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PersonalMedicalHistory")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("SmartWatchConnected")
+                        .HasColumnType("bit");
+
+                    b.HasKey("PersonalHealthRecordId");
+
+                    b.HasIndex("PatientId")
+                        .IsUnique();
+
+                    b.ToTable("PersonalHealthRecord");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.Prescription", b =>
+                {
+                    b.Property<int>("PrescriptionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime?>("DateCanceled")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateFinished")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateStarted")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MedicalInstructionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReasonCancel")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PrescriptionId");
+
+                    b.HasIndex("MedicalInstructionId")
+                        .IsUnique();
+
+                    b.ToTable("Prescription");
                 });
 
             modelBuilder.Entity("HomeDoctor.Data.Models.Relative", b =>
@@ -298,6 +737,85 @@ namespace HomeDoctor.Data.Migrations
                     b.ToTable("Role");
                 });
 
+            modelBuilder.Entity("HomeDoctor.Data.Models.VitalSign", b =>
+                {
+                    b.Property<int>("VitalSignId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int?>("MinuteAgain")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MinuteDangerInterval")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("NumberMax")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("NumberMin")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TimeStart")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VitalSignScheduleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VitalSignTypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("VitalSignId");
+
+                    b.HasIndex("VitalSignScheduleId");
+
+                    b.HasIndex("VitalSignTypeId");
+
+                    b.ToTable("VitalSign");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.VitalSignSchedule", b =>
+                {
+                    b.Property<int>("VitalSignScheduleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("DateFinished")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateStarted")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MedicalInstructionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("VitalSignScheduleId");
+
+                    b.HasIndex("MedicalInstructionId")
+                        .IsUnique();
+
+                    b.ToTable("VitalSignSchedule");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.VitalSignType", b =>
+                {
+                    b.Property<int>("VitalSignTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("VitalSignName")
+                        .HasColumnType("int");
+
+                    b.HasKey("VitalSignTypeId");
+
+                    b.ToTable("VitalSignType");
+                });
+
             modelBuilder.Entity("ContractDisease", b =>
                 {
                     b.HasOne("HomeDoctor.Data.Models.Contract", null)
@@ -313,13 +831,66 @@ namespace HomeDoctor.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("DiseaseHealthRecord", b =>
+                {
+                    b.HasOne("HomeDoctor.Data.Models.Disease", null)
+                        .WithMany()
+                        .HasForeignKey("DiseasesDiseaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HomeDoctor.Data.Models.HealthRecord", null)
+                        .WithMany()
+                        .HasForeignKey("HealthRecordsHealthRecordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("HomeDoctor.Data.Models.Account", b =>
                 {
                     b.HasOne("HomeDoctor.Data.Models.Role", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId");
+                        .WithMany("Accounts")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.ActionEveryDay", b =>
+                {
+                    b.HasOne("HomeDoctor.Data.Models.ActionEveryWeek", null)
+                        .WithMany("ActionEveryDays")
+                        .HasForeignKey("ActionEveryWeekId");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.ActionEveryWeek", b =>
+                {
+                    b.HasOne("HomeDoctor.Data.Models.ActionFirstTime", null)
+                        .WithMany("ActionEveryWeeks")
+                        .HasForeignKey("ActionFirstTimeId");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.ActionFirstTime", b =>
+                {
+                    b.HasOne("HomeDoctor.Data.Models.Contract", "Contract")
+                        .WithOne("ActionFirstTime")
+                        .HasForeignKey("HomeDoctor.Data.Models.ActionFirstTime", "ContractId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Contract");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.Appointment", b =>
+                {
+                    b.HasOne("HomeDoctor.Data.Models.Contract", "Contract")
+                        .WithMany("Appointments")
+                        .HasForeignKey("ContractId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Contract");
                 });
 
             modelBuilder.Entity("HomeDoctor.Data.Models.Contract", b =>
@@ -335,7 +906,7 @@ namespace HomeDoctor.Data.Migrations
                         .HasForeignKey("LicenseId");
 
                     b.HasOne("HomeDoctor.Data.Models.Patient", "Patient")
-                        .WithMany()
+                        .WithMany("Contracts")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -350,15 +921,15 @@ namespace HomeDoctor.Data.Migrations
             modelBuilder.Entity("HomeDoctor.Data.Models.Doctor", b =>
                 {
                     b.HasOne("HomeDoctor.Data.Models.Account", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId")
+                        .WithOne("Doctor")
+                        .HasForeignKey("HomeDoctor.Data.Models.Doctor", "AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Account");
                 });
 
-            modelBuilder.Entity("HomeDoctor.Data.Models.Patient", b =>
+            modelBuilder.Entity("HomeDoctor.Data.Models.FireBaseFCM", b =>
                 {
                     b.HasOne("HomeDoctor.Data.Models.Account", "Account")
                         .WithMany()
@@ -367,6 +938,136 @@ namespace HomeDoctor.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Account");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.HealthRecord", b =>
+                {
+                    b.HasOne("HomeDoctor.Data.Models.Contract", "Contract")
+                        .WithOne("HealthRecord")
+                        .HasForeignKey("HomeDoctor.Data.Models.HealthRecord", "ContractId");
+
+                    b.HasOne("HomeDoctor.Data.Models.PersonalHealthRecord", "PersonalHealthRecord")
+                        .WithMany("HealthRecords")
+                        .HasForeignKey("PersonalHealthRecordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Contract");
+
+                    b.Navigation("PersonalHealthRecord");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.MedicalInstruction", b =>
+                {
+                    b.HasOne("HomeDoctor.Data.Models.HealthRecord", "HealthRecord")
+                        .WithMany("MedicalInstructions")
+                        .HasForeignKey("HealthRecordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HomeDoctor.Data.Models.MedicalInstructionType", "MedicalInstructionType")
+                        .WithMany()
+                        .HasForeignKey("MedicalInstructionTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("HealthRecord");
+
+                    b.Navigation("MedicalInstructionType");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.MedicalInstructionShare", b =>
+                {
+                    b.HasOne("HomeDoctor.Data.Models.Contract", "Contract")
+                        .WithMany("MedicalInstructionShares")
+                        .HasForeignKey("ContractId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HomeDoctor.Data.Models.MedicalInstruction", "MedicalInstruction")
+                        .WithMany("MedicalInstructionShares")
+                        .HasForeignKey("MedicalInstructionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Contract");
+
+                    b.Navigation("MedicalInstruction");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.MedicationSchedule", b =>
+                {
+                    b.HasOne("HomeDoctor.Data.Models.Prescription", "Prescription")
+                        .WithMany("MedicationSchedules")
+                        .HasForeignKey("PrescriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Prescription");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.Notification", b =>
+                {
+                    b.HasOne("HomeDoctor.Data.Models.Account", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HomeDoctor.Data.Models.Contract", "Contract")
+                        .WithMany()
+                        .HasForeignKey("ContractId");
+
+                    b.HasOne("HomeDoctor.Data.Models.MedicalInstruction", "MedicalInstruction")
+                        .WithMany()
+                        .HasForeignKey("MedicalInstructionId");
+
+                    b.HasOne("HomeDoctor.Data.Models.NotificationType", "NotificationType")
+                        .WithMany()
+                        .HasForeignKey("NotificationTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("Contract");
+
+                    b.Navigation("MedicalInstruction");
+
+                    b.Navigation("NotificationType");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.Patient", b =>
+                {
+                    b.HasOne("HomeDoctor.Data.Models.Account", "Account")
+                        .WithOne("Patient")
+                        .HasForeignKey("HomeDoctor.Data.Models.Patient", "AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.PersonalHealthRecord", b =>
+                {
+                    b.HasOne("HomeDoctor.Data.Models.Patient", "Patient")
+                        .WithOne("PersonalHealthRecord")
+                        .HasForeignKey("HomeDoctor.Data.Models.PersonalHealthRecord", "PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.Prescription", b =>
+                {
+                    b.HasOne("HomeDoctor.Data.Models.MedicalInstruction", "MedicalInstruction")
+                        .WithOne("Prescription")
+                        .HasForeignKey("HomeDoctor.Data.Models.Prescription", "MedicalInstructionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MedicalInstruction");
                 });
 
             modelBuilder.Entity("HomeDoctor.Data.Models.Relative", b =>
@@ -380,9 +1081,105 @@ namespace HomeDoctor.Data.Migrations
                     b.Navigation("Patient");
                 });
 
+            modelBuilder.Entity("HomeDoctor.Data.Models.VitalSign", b =>
+                {
+                    b.HasOne("HomeDoctor.Data.Models.VitalSignSchedule", "VitalSignSchedule")
+                        .WithMany("VitalSigns")
+                        .HasForeignKey("VitalSignScheduleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HomeDoctor.Data.Models.VitalSignType", "VitalSignType")
+                        .WithMany()
+                        .HasForeignKey("VitalSignTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("VitalSignSchedule");
+
+                    b.Navigation("VitalSignType");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.VitalSignSchedule", b =>
+                {
+                    b.HasOne("HomeDoctor.Data.Models.MedicalInstruction", "MedicalInstruction")
+                        .WithOne("VitalSignSchedule")
+                        .HasForeignKey("HomeDoctor.Data.Models.VitalSignSchedule", "MedicalInstructionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MedicalInstruction");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.Account", b =>
+                {
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.ActionEveryWeek", b =>
+                {
+                    b.Navigation("ActionEveryDays");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.ActionFirstTime", b =>
+                {
+                    b.Navigation("ActionEveryWeeks");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.Contract", b =>
+                {
+                    b.Navigation("ActionFirstTime");
+
+                    b.Navigation("Appointments");
+
+                    b.Navigation("HealthRecord");
+
+                    b.Navigation("MedicalInstructionShares");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.HealthRecord", b =>
+                {
+                    b.Navigation("MedicalInstructions");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.MedicalInstruction", b =>
+                {
+                    b.Navigation("MedicalInstructionShares");
+
+                    b.Navigation("Prescription");
+
+                    b.Navigation("VitalSignSchedule");
+                });
+
             modelBuilder.Entity("HomeDoctor.Data.Models.Patient", b =>
                 {
+                    b.Navigation("Contracts");
+
+                    b.Navigation("PersonalHealthRecord");
+
                     b.Navigation("Relatives");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.PersonalHealthRecord", b =>
+                {
+                    b.Navigation("HealthRecords");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.Prescription", b =>
+                {
+                    b.Navigation("MedicationSchedules");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.Role", b =>
+                {
+                    b.Navigation("Accounts");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.VitalSignSchedule", b =>
+                {
+                    b.Navigation("VitalSigns");
                 });
 #pragma warning restore 612, 618
         }

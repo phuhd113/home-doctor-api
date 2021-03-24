@@ -26,39 +26,7 @@ namespace HomeDoctor.Api.Controllers
         {
             _serDoc = serDoc;
             _config = config;
-        }
-        /// <summary>
-        /// Login of Doctor with username and password.
-        /// </summary>
-        [HttpPost("Login")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Login(LoginDoctor login)
-        {
-            var doctor = _serDoc.Login(login.Username, login.Password).Result;
-            if (doctor != null)
-            {
-                return Ok(new { Token = GenerateJSONWebToken(doctor.DoctorId)});
-            }
-            return NotFound();
-        }
-
-        /// <summary>
-        /// Get Doctor by username
-        /// </summary>
-        [HttpGet()]
-        public async Task<IActionResult> GetDoctorInformationByUsername(string username)
-        {
-            if(username != null)
-            {
-                var doctorInf = _serDoc.GetDoctorInformation(username,0).Result;
-                if(doctorInf != null)
-                {
-                    return Ok(doctorInf);
-                }
-            }
-            return NotFound();
-        }
-
+        }            
         /// <summary>
         /// Get Doctor by Id
         /// </summary>      
@@ -67,7 +35,7 @@ namespace HomeDoctor.Api.Controllers
         {
             if (doctorId != 0)
             {
-                var doctorInf = _serDoc.GetDoctorInformation(null, doctorId).Result;
+                var doctorInf = await _serDoc.GetDoctorInformation(doctorId);
                 if (doctorInf != null)
                 {
                     return Ok(doctorInf);

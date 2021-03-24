@@ -8,10 +8,11 @@ namespace HomeDoctor.Business.IService
 {
     public interface ILicenseService
     {
-        public Task<bool> AddLicense(License license);
+        public Task<bool> CreateLicense(License license);
         public Task<bool> UpdateLicense(License? license);
         public Task<bool> DeleteLicense(int licenseId);
         public Task<ICollection<License>> GetLicensesByStatus(string? status);
         public Task<License> GetLicenseById(int licenseId);
+        public Task<License> GetLicenseByDays(int days);
     }
 }
