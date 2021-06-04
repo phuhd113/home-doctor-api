@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using HomeDoctor.Business.IService;
 using HomeDoctor.Business.ViewModel.RequestModel;
 using HomeDoctor.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HomeDoctor.Api.Controllers
 {
+    [Authorize]
     [Route("api/v1/[controller]")]
     [ApiController]
     public class ContractsController : ControllerBase
@@ -17,21 +19,19 @@ namespace HomeDoctor.Api.Controllers
         private readonly IContractService _serContract;
         private readonly IPatientService _serPatient;
         private readonly IDoctorService _serDoctor;
-        private readonly ILicenseService _serLicense;
-        private readonly IDiseaseService _serDisease;
         private readonly IFirebaseFCMService _serFirebase;
         private readonly INotificationService _serNotification;
 
-        public ContractsController(IContractService serContract, IPatientService serPatient, IDoctorService serDoctor, ILicenseService serLicense, IDiseaseService serDisease, IFirebaseFCMService serFirebase, INotificationService serNotification)
+        public ContractsController(IContractService serContract, IPatientService serPatient, IDoctorService serDoctor, IFirebaseFCMService serFirebase, INotificationService serNotification)
         {
             _serContract = serContract;
             _serPatient = serPatient;
             _serDoctor = serDoctor;
-            _serLicense = serLicense;
-            _serDisease = serDisease;
             _serFirebase = serFirebase;
             _serNotification = serNotification;
         }
+
+
 
 
         /// <summary>
@@ -42,10 +42,10 @@ namespace HomeDoctor.Api.Controllers
         {
             if (contract != null)
             {
+                /*
                 // Check exist Contract have status "PENDING" or "ACTIVE" or "APPROVED"between doctor and patient 
-                var checkExist = await _serContract.CheckContractToCreateNew(contract.DoctorId, contract.PatientId);
-                if (checkExist == null)
-                {
+                var checkExistContractD = await _serContract.CheckContractToCreateNew(contract.DoctorId, contract.PatientId,null);
+                */
                     var patient = await _serPatient.GetPatientInformation(contract.PatientId);
                     var doctor = await _serDoctor.GetDoctorInformation(contract.DoctorId);                
                     if (patient != null && doctor != null)
@@ -61,18 +61,14 @@ namespace HomeDoctor.Api.Controllers
                                 AccountSendId = patient.AccountId,
                                 NotificationTypeId = 1,                               
                             };
-                            await _serNotification.InsertNotification(noti);
-
-                            // Firebase Notification for Doctor
-                            await _serFirebase.PushNotification(2, patient.AccountId,doctor.AccountId,1,contractId,null);
+                            if(await _serNotification.InsertNotification(noti))
+                            {
+                                // Firebase Notification for Doctor
+                                await _serFirebase.PushNotification(2, patient.AccountId, doctor.AccountId, 1, contractId, null, null,null);
+                            }                           
                             return StatusCode(201, "Create Contract success.");
                         }
-                    }
-                }
-                else
-                {
-                    return BadRequest("A contract exists between a doctor and a patient");
-                }
+                    }           
             }
             return BadRequest();
         }
@@ -101,19 +97,19 @@ namespace HomeDoctor.Api.Controllers
         /// Update Status of Contract .Doctor update status "APPROVED" or "CANCELD".Patient update status "ACTIVE" or "CANCELP".
         /// </summary>
         [HttpPut("{contractId}")]
-        public async Task<IActionResult> UpdateContract(int doctorId,int patientId,int contractId, string status, DateTime? dateStart, int? daysOfTracking)
+        public async Task<IActionResult> UpdateContract(int contractId,ContractUpdateRequest request)
         {     
             // When doctor or patient CANCEL contract
-            if(contractId != 0 && (status.ToUpper().Equals("CANCELD") || status.ToUpper().Equals("CANCELP")))
+            if(contractId != 0 && (request.Status.ToUpper().Equals("CANCELD") || request.Status.ToUpper().Equals("CANCELP")))
             {
-                var check = await _serContract.UpdateStatuContract(contractId, null, null, status.ToUpper());
+                var check = await _serContract.UpdateStatusContract(contractId, null, null, request.Status.ToUpper(),null);
                 if (check)
                 {
-                    if (status.ToUpper().Equals("CANCELD"))
+                    if (request.Status.ToUpper().Equals("CANCELD"))
                     {
-                        // Notification for patient
-                        var patient = await _serPatient.GetPatientInformation(patientId);
-                        var doctor = await _serDoctor.GetDoctorInformation(doctorId);
+                        // Notification from patient
+                        var patient = await _serPatient.GetPatientInformation(request.PatientId);
+                        var doctor = await _serDoctor.GetDoctorInformation(request.DoctorId);
                         if (patient != null)
                         {
                             // Save notification
@@ -125,14 +121,14 @@ namespace HomeDoctor.Api.Controllers
                                 NotificationTypeId = 5
                             };
                             var saveNoti = await _serNotification.InsertNotification(notiRequest);
-                            await _serFirebase.PushNotification(1,doctor.AccountId ,patient.AccountId, 5, contractId, null);
+                            await _serFirebase.PushNotification(1,doctor.AccountId ,patient.AccountId, 5, contractId, null,null,null);
                         }
                     }
-                    if (status.ToUpper().Equals("CANCELP"))
+                    if (request.Status.ToUpper().Equals("CANCELP"))
                     {
                         // Notification for Doctor
-                        var doctor = await _serDoctor.GetDoctorInformation(doctorId);
-                        var patient = await _serPatient.GetPatientInformation(patientId);
+                        var doctor = await _serDoctor.GetDoctorInformation(request.DoctorId);
+                        var patient = await _serPatient.GetPatientInformation(request.PatientId);
                         if (doctor != null)
                         {
                             // Save notification
@@ -145,7 +141,7 @@ namespace HomeDoctor.Api.Controllers
                             };
                             var saveNoti = await _serNotification.InsertNotification(notiRequest);
                             // Firebase Notification for patient
-                            await _serFirebase.PushNotification(2,patient.AccountId ,doctor.AccountId, 10, contractId, null);
+                            await _serFirebase.PushNotification(2,patient.AccountId ,doctor.AccountId, 10, contractId, null,null,null);
                         }
                     }
                     return StatusCode(204, "Cancel contract success");
@@ -153,23 +149,25 @@ namespace HomeDoctor.Api.Controllers
             }
             else
             {
-                if (patientId != 0 && doctorId != 0 && contractId != 0 && !string.IsNullOrEmpty(status))
+                if (request.PatientId != 0 && request.DoctorId != 0 && contractId != 0 && !string.IsNullOrEmpty(request.Status))
                 {
+                    /*
                     // Get all contract of doctor
-                    var contracts = await _serContract.GetContractsByStatus(doctorId, null, null);
+                    var contracts = await _serContract.GetContractsByStatus(request.DoctorId, null, null);
                     // Check contract has status "ACTIVE" < 5           
                     var contractActive = contracts.Where(x => x.Status.Equals("ACTIVE")).ToList();
                     if (contractActive.Count < 5)
                     {                       
-                        if (status.ToUpper().Equals("APPROVED"))
+                    */
+                        if (request.Status.ToUpper().Equals("APPROVED"))
                         {
                             // update status when active or approved
-                            var check = await _serContract.UpdateStatuContract(contractId, dateStart, daysOfTracking, status);
+                            var check = await _serContract.UpdateStatusContract(contractId, request.DateStart, request.DaysOfTracking, request.Status, request.MedicalInstructionChooses);
                             if (check)
                             {
                                 // notificate for patient
-                                var patient = await _serPatient.GetPatientInformation(patientId);
-                                var doctor = await _serDoctor.GetDoctorInformation(doctorId);
+                                var patient = await _serPatient.GetPatientInformation(request.PatientId);
+                                var doctor = await _serDoctor.GetDoctorInformation(request.DoctorId);
                                 if (patient != null)
                                 {
                                     // Save notification
@@ -182,20 +180,20 @@ namespace HomeDoctor.Api.Controllers
                                     };
                                     var saveNoti = await _serNotification.InsertNotification(notiRequest);
                                     // Firebase Notification for patient
-                                    await _serFirebase.PushNotification(1,doctor.AccountId ,patient.AccountId, 4, contractId, null);
+                                    await _serFirebase.PushNotification(1,doctor.AccountId ,patient.AccountId, 4, contractId, null,null,null);
                                 }
                                 return StatusCode(204, "Doctor aprroved Contract to success");
                             }
                         }
                         // Patient sign Contract
-                        if (status.ToUpper().Equals("ACTIVE"))
+                        if (request.Status.ToUpper().Equals("SIGNED"))
                         {
                             // update status when active or approved
-                            var check = await _serContract.UpdateStatuContract(contractId, null, null, status);
+                            var check = await _serContract.UpdateStatusContract(contractId, null, null,request.Status.ToUpper(), null);
                             if (check)
                             {
-                                var doctor = await _serDoctor.GetDoctorInformation(doctorId);
-                                var patient = await _serPatient.GetPatientInformation(patientId);
+                                var doctor = await _serDoctor.GetDoctorInformation(request.DoctorId);
+                                var patient = await _serPatient.GetPatientInformation(request.PatientId);
                                 if (doctor != null)
                                 {
                                     // Save notification of patient for doctor
@@ -206,27 +204,46 @@ namespace HomeDoctor.Api.Controllers
                                         ContractId = contractId,
                                         NotificationTypeId = 9
                                     };                                    
-                                    await _serNotification.InsertNotification(notiRequest);
-                                    //Save notification of systym for doctor 
+                                    await _serNotification.InsertNotification(notiRequest);   
+                                    // Firebase Notification for doctor
+                                    await _serFirebase.PushNotification(2,patient.AccountId ,doctor.AccountId, 9, contractId, null,null,null);                                  
+                                }
+                                return StatusCode(204, "SIGNED contract to success");
+                            }                           
+                        }
+                        if (request.Status.ToUpper().Equals("ACTIVE"))
+                        {
+                            // update status when active or approved
+                            var check = await _serContract.UpdateStatusContract(contractId, null, null, request.Status, null);
+                            if (check)
+                            {
+                                var doctor = await _serDoctor.GetDoctorInformation(request.DoctorId);
+                                var patient = await _serPatient.GetPatientInformation(request.PatientId);
+                                if (doctor != null)
+                                {
+                                    //Save notification of system for doctor 
                                     var notiSystem = new NotificationRequest()
                                     {
                                         AccountId = doctor.AccountId,
+                                        AccountSendId = patient.AccountId,
                                         ContractId = contractId,
-                                        NotificationTypeId = 15
+                                        NotificationTypeId = 15,
+                                        OnSystem = true
                                     };
-                                    await _serNotification.InsertNotification(notiSystem);
-                                    // Firebase Notification for doctor
-                                    await _serFirebase.PushNotification(2,patient.AccountId ,doctor.AccountId, 9, contractId, null);
-                                    await _serFirebase.PushNotification(2, patient.AccountId, doctor.AccountId, 15, null, null);
+                                    await _serNotification.InsertNotification(notiSystem);                                   
+                                    // Noti firstTimeAction
+                                    await _serFirebase.PushNotification(2, patient.AccountId, doctor.AccountId, 15, contractId, null, null,null);
                                 }
                                 return StatusCode(204, "active contract to success");
-                            }                           
+                            }
                         }
+                        /*
                     }
                     else
                     {
                         return StatusCode(405, "Contract have status 'ACTIVE' is FULL( >= 5)");
                     }
+                */
                 }
             }                                                                        
             return BadRequest();
@@ -248,17 +265,44 @@ namespace HomeDoctor.Api.Controllers
             return NotFound();
         }
         [HttpGet("CheckContractToCreate")]
-        public async Task<IActionResult> CheckContractToCreate(int doctorId, int patientId)
+        public async Task<IActionResult> CheckContractToCreate(int doctorId, int patientId,DateTime? dateStart)
         {
             if(doctorId != 0 && patientId != 0)
             {
-                var respone = await _serContract.CheckContractToCreateNew(doctorId, patientId);
+                var respone = await _serContract.CheckContractToCreateNew(doctorId, patientId,dateStart);
                 if (respone != null)
                 {
                     return Ok(respone);
                 }
             }
             return NoContent();
+        }
+        /// <summary>
+        /// Demo Locked Contract
+        /// </summary>
+        [HttpPut("UpdateContractToDemo")]
+        public async Task<IActionResult> UpdateContractToDemo(int contractId,string? status,DateTime? timeStarted)
+        {
+            if(contractId != 0)
+            {
+                var respone = await _serContract.UpdateContractToDemo(contractId, status, timeStarted);
+                if (respone)
+                {
+                    return StatusCode(204);
+                }               
+            }
+            return BadRequest();
+        }
+
+        [HttpGet("GetAllContractByStatus")]
+        public async Task<IActionResult> GetAllContractByStatus(string? status)
+        {
+            var respone = await _serContract.GetAllContractsByAdmin(status);
+            if(respone != null)
+            {
+                return Ok(respone);
+            }
+            return NotFound();
         }
     }
 }

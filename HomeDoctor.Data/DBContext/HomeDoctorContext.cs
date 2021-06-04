@@ -49,6 +49,7 @@ namespace HomeDoctor.Data.DBContext
             modelBuilder.Entity<Doctor>(entity =>
             entity.HasOne(a => a.User).WithOne(a => a.Doctor).HasForeignKey<Doctor>(a => a.UserId));
             */
+            modelBuilder.Entity<ContractMedicalInstruction>().HasKey(a => new { a.ContractId, a.MedicalInstructionId });
         }
 
         // entities
@@ -64,20 +65,16 @@ namespace HomeDoctor.Data.DBContext
         public DbSet<MedicalInstruction> MedicalInstruction { get; set; }
         public DbSet<MedicalInstructionType> MedicalInstructionType { get; set; }
         public DbSet<MedicationSchedule> MedicationSchedule { get; set; }       
-        public DbSet<MedicalInstructionShare> MedicalInstructionShare { get; set; }
-        public DbSet<FireBaseFCM> FireBaseFCM { get; set; }
         public DbSet<Notification> Notification { get; set; }
         public DbSet<NotificationType> NotificationType { get; set; }
         public DbSet<Prescription> Prescription { get; set; }
-        public DbSet<Contract> Contracts { get; set; }
         public DbSet<Appointment> Appointment { get; set; }
-        public DbSet<ActionFirstTime> ActionFirstTime { get; set; }
-        public DbSet<ActionEveryWeek> ActionEveryWeek { get; set; }
-        public DbSet<ActionEveryDay> ActionEveryDay { get; set; }
         public DbSet<VitalSignSchedule> VitalSignSchedule { get; set; }
         public DbSet<VitalSignType> VitalSignType { get; set; }
-
-
-
+        public DbSet<VitalSignValue> VitalSignValue { get; set; }
+        public DbSet<Role> Role { get; set; }
+        public DbSet<MedicalInstructionImage> MedicalInstructionImage { get; set; }
+        public DbSet<ContractMedicalInstruction> ContractMedicalInstruction { get; set; }
+        public DbSet<VitalSignValueShare> VitalSignValueShare { get; set; }
     }
 }

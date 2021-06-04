@@ -11,9 +11,11 @@ namespace HomeDoctor.Business.IService
     {
         public Task<ICollection<HealthRecordInformation>> GetHealthRecordByPatientId(int patientId,bool? onSystem);
         public Task<HealthRecordInformation> GetHealthRecordById(int healthRecordId);
-        public Task<bool> CreateHealthRecord(HealthRecordCreate healthRecord);
+        public Task<int> CreateHealthRecord(HealthRecordCreate healthRecord);
         public Task<HealthRecordOverviewRespone> GetHROverviewByHRId(int healthRecordId);
-        //// Doctor manage HealthRecord of Patient
-        public Task<HealingConditions> GetHealingConditions(int healthRecordId, int contractId);
+
+        public Task<bool> UpdateHealthRecord(int healthRecordId, string place, string description, ICollection<string>? diseases);
+        public Task<bool> UpdateActionFirstTimeToDemo(int healthRecordId, bool actionFirstTime);
+        public Task<bool> DeleteHealthRecord(int healthRecordId);
     }
 }

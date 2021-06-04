@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using HomeDoctor.Business.IService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -44,22 +46,25 @@ namespace HomeDoctor.Api.Controllers
             return NotFound();
 
         }
-
-        [HttpPost]
-        public async Task<IActionResult> TestReadImage(IFormFile image)
-        {
-            await _serImage.TestReadImage(image);
+       
+        
+        [HttpPost("CheckExistImage")]
+        public async Task<IActionResult> CheckExistImage(int healthRecordId,int medicalInstructionTypeId,IFormFile image)
+        {          
+            if(image != null)
+            {
+                var respone = await _serImage.CheckImageExist(healthRecordId,medicalInstructionTypeId,image);
+                if (respone)
+                {
+                    return NoContent();
+                }
+                else
+                {
+                    return Ok();
+                }
+                                      
+            }
             return BadRequest();
-        }
-        [HttpGet("TestTime")]
-        public async Task<IActionResult> GetTime()
-        {
-            string tmp1 = "Datetime.now : " +DateTime.Now.ToUniversalTime();
-            string tmp2 = "DateTime.UtcNow : "+DateTime.Now.ToUniversalTime().AddHours(7);           
-            string tmp3 = "Tmp3 : " + TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.Local);
-
-            string tmp4 = TimeZoneInfo.Local.Id.Equals("SE Asia Standard Time") ? DateTime.Now.ToString() : DateTime.Now.AddDays(7).ToString();
-            return Ok(tmp1 + " \n " + tmp2 + "\n" + tmp3 + "\n" + "\n" + tmp4 + "\n" + TimeZoneInfo.Local.ToString());
         }
     }
 }

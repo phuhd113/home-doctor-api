@@ -9,7 +9,6 @@ namespace HomeDoctor.Business.IService
     public interface IFirebaseFCMService
     {
         public Task<bool> SaveToken(int patientId,string token);
-        public Task PushNotification(int deviceType,int senderAccountID ,int accountId, int notiTypeId, int? contractId, int? medicalInstructionId);
-        public Task<string> GenarateBodySend(int notificationType, int senderAccountId, string bodyNoti);
+        public Task PushNotification(int deviceType,int senderAccountID ,int accountId, int notiTypeId, int? contractId, int? medicalInstructionId,int? appointmentId,string? b);
     }
 }

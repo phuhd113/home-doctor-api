@@ -13,5 +13,9 @@ namespace HomeDoctor.Business.IService
         public Task<ICollection<NotificationRespone>> GetNotificationByAccountId(int accountId, bool onSystem);
         public Task<bool> UpdateStatusNotificationByNotiId(int notiId);
         public Task<ICollection<HistoryRespone>> GetHistoryByAccountId(int accountId);
+        public Task<string> GenarateBodySend(int notiType, int senderAccountId,string? bodyCustom);
+
+        public Task<NotificationRespone> GetTimeLineOfPatient(int accountPatientId,int accountDoctorID ,DateTime dateTime);
+        public Task<ICollection<object>> GetDateTimeHaveNotification(int accountPatientId, int accountDoctorID);
     }
 }

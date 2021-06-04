@@ -10,6 +10,10 @@ namespace HomeDoctor.Business.ViewModel.ResponeModel
         public string Place { get; set; }
         public string? Description { get; set; }
         public DateTime? DateCreated { get; set; }
+        public DateTime? DateFinished { get; set; }
+        public DateTime? DateStarted { get; set; }
+        public string? Status { get; set; }
+        public string? ContractStatus { get; set; }
         public int? ContractId { get; set; }
         public ICollection<Disease> Diseases { get; set; }
 

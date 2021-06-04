@@ -57,5 +57,43 @@ namespace HomeDoctor.Api.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+        
+        [HttpGet("GetDoctorTrackingByPatientId")]
+        public async Task<IActionResult> GetDoctorTrackingByPatientId(int patientId)
+        {
+            if(patientId != 0)
+            {
+                var respone = await _serDoc.GetDoctorTrackingByPatientId(patientId);
+                if(respone != null)
+                {
+                    return Ok(respone);
+                }
+            }
+            return NotFound();
+        }
+        [HttpGet("GetAllDoctor")]
+        public async Task<IActionResult> GetAllDoctor()
+        {
+            var respone = await _serDoc.GetAllDoctor();
+            if(respone != null)
+            {
+                return Ok(respone);
+            }
+            return NotFound();
+        }
+
+        [HttpPost("CreateDoctor")]
+        public async Task<IActionResult> CreateDoctor(DoctorCreate doctor)
+        {
+            if(doctor != null)
+            {
+                var respone = await _serDoc.CreateDoctor(doctor);
+                if(respone != 0)
+                {
+                    return StatusCode(201, respone);
+                }
+            }
+            return BadRequest();
+        }
     }
 }

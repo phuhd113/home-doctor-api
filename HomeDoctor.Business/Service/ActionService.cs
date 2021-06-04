@@ -13,45 +13,45 @@ namespace HomeDoctor.Business.Service
 {
     public class ActionService : IActionService
     {
-        private readonly IRepositoryBase<ActionFirstTime> _repo;
+        private readonly IRepositoryBase<HealthRecord> _repoHR;
         private readonly IUnitOfWork _uow;
 
         public ActionService(IUnitOfWork uow)
         {
             _uow = uow;
-            _repo = _uow.GetRepository<ActionFirstTime>();
+            _repoHR = _uow.GetRepository<HealthRecord>();
         }
 
-        public async Task<bool> CheckActionFirstTime(int contractId, bool? appointmentFirst, bool? prescriptionFirst)
+        public async Task<bool> CheckActionFirstTime(int healthRecordId, bool? appointmentFirst, bool? vitalSignScheduleFirst)
         {
-            if(contractId != 0)
+            if(healthRecordId != 0)
             {
-                var check = await _repo.GetDbSet().Where(x => x.ContractId == contractId).AnyAsync(
+                var check = await _repoHR.GetDbSet().Where(x => x.HealthRecordId == healthRecordId).AnyAsync(
                     x => (appointmentFirst != null ? x.AppointmentFirst == appointmentFirst : true)
-                    && (prescriptionFirst != null ? x.PrescriptionFirst == prescriptionFirst : true));
+                    && (vitalSignScheduleFirst != null ? x.VitalSignScheduleFirst == vitalSignScheduleFirst : true));
                 return check;
             }
             return false;
         }
 
-        public async Task<bool> UpdateActionFirstTime(int contractId, bool? appointmentFirst, bool? prescriptionFirst)
+        public async Task<bool> UpdateActionFirstTime(int healthRecordId, bool? appointmentFirst, bool? vitalSignScheduleFirst)
         {
-           if(contractId != 0)
+           if(healthRecordId != 0)
             {
-                if(appointmentFirst != null || prescriptionFirst != null)
+                if(appointmentFirst != null || vitalSignScheduleFirst != null)
                 {
-                    var action = await _repo.GetDbSet().Where(x => x.ContractId == contractId).FirstOrDefaultAsync();
+                    var action = await _repoHR.GetDbSet().Where(x => x.HealthRecordId == healthRecordId).FirstOrDefaultAsync();
                     if(action != null)
                     {
                         if(appointmentFirst != null)
                         {
                             action.AppointmentFirst = appointmentFirst.GetValueOrDefault();
                         }
-                        else
+                        if(vitalSignScheduleFirst != null)
                         {
-                            action.PrescriptionFirst = prescriptionFirst.GetValueOrDefault();
+                            action.VitalSignScheduleFirst = vitalSignScheduleFirst.GetValueOrDefault();
                         }
-                        if(await _repo.Update(action))
+                        if(await _repoHR.Update(action))
                         {
                             await _uow.CommitAsync();
                             return true;

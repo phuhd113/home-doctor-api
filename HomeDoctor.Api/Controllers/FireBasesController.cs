@@ -22,9 +22,9 @@ namespace HomeDoctor.Api.Controllers
         /// Save token of patient or doctor when Login success.
         /// </summary>    
         [HttpPost]
-        public async Task<IActionResult> SaveTokenDevice([FromForm]int accountId,[FromForm]string token)
+        public async Task<IActionResult> SaveTokenDevice([FromForm]int accountId,[FromForm]string? token)
         {
-            if (!string.IsNullOrEmpty(token) && accountId != 0)
+            if (accountId != 0)
             {
                 var saveToken = await _serFB.SaveToken(accountId, token);
                 if (saveToken)

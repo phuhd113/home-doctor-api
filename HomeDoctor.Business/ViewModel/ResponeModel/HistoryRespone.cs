@@ -15,7 +15,7 @@ namespace HomeDoctor.Business.ViewModel.ResponeModel
             public int HistoryType { get; set; }
             public int? MedicalInstructionId { get; set; }
             public int? ContractId { get; set; }
-            public string TimeAgo { get; set; }
+            public double TimeAgo { get; set; }
         }
         
 

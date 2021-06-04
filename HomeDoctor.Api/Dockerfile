@@ -7,7 +7,6 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-ADD ["Data", "/Data/"]
 COPY ["HomeDoctor.Api/HomeDoctor.Api.csproj", "HomeDoctor.Api/"]
 COPY ["HomeDoctor.Data/HomeDoctor.Data.csproj", "HomeDoctor.Data/"]
 COPY ["HomeDoctor.Business/HomeDoctor.Business.csproj", "HomeDoctor.Business/"]

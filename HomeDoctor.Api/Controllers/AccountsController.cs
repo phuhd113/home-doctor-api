@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using HomeDoctor.Business.IService;
 using HomeDoctor.Business.ViewModel.RequestModel;
 using HomeDoctor.Business.ViewModel.ResponeModel;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -45,6 +43,19 @@ namespace HomeDoctor.Api.Controllers
             return NotFound();
         }
 
+        [HttpPost("PatientRegister")]
+        public async Task<IActionResult> PatientRegister(PatientRegisterRequest request)
+        {
+            if(!string.IsNullOrEmpty(request.Username) && !string.IsNullOrEmpty(request.Password))
+            {
+                if(await _ser.RegisterPatient(request))
+                {
+                    return Ok();
+                }
+            }
+            return BadRequest();
+        }
+
         private string GenerateJSONWebToken(LoginRespone respone)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
@@ -61,14 +72,19 @@ namespace HomeDoctor.Api.Controllers
                 claims.Add(new Claim("accountId", respone.AccountId.ToString()));
                 claims.Add(new Claim("patientId", respone.Id.ToString()));
             }
+            if (respone.RoleId == 3)
+            {
+                claims.Add(new Claim("accountId", respone.AccountId.ToString()));
+            }
 
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],
               _config["Jwt:Audience"],
               claims,
-              expires: DateTime.Now.AddMinutes(120),
+              expires: DateTime.Now.AddMinutes(200),
               signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
     }
 }

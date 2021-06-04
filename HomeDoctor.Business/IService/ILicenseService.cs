@@ -1,4 +1,5 @@
-﻿using HomeDoctor.Data.Models;
+﻿using HomeDoctor.Business.ViewModel.RequestModel;
+using HomeDoctor.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +9,7 @@ namespace HomeDoctor.Business.IService
 {
     public interface ILicenseService
     {
-        public Task<bool> CreateLicense(License license);
+        public Task<int> CreateLicense(LicenseCreate license);
         public Task<bool> UpdateLicense(License? license);
         public Task<bool> DeleteLicense(int licenseId);
         public Task<ICollection<License>> GetLicensesByStatus(string? status);

@@ -8,11 +8,12 @@ namespace HomeDoctor.Business.ViewModel.RequestModel
     {   
         public int HealthRecordId { get; set; }
         public int DoctorAccountId { get; set; }
-        public int ContractId { get; set; }
-        public string? Diagnose { get; set; }
+        public string? Conclusion { get; set; }
         public DateTime? DateStart { get; set; }
         public DateTime? DateFinish { get; set; }
-        public string? Description { get; set; }            
+        public string? Description { get; set; }    
+        public int? AppointmentId { get; set; }
+        public ICollection<string>? DiseaseIds { get; set; }
         public ICollection<MedicationSchedule>? MedicationScheduleCreates { get; set; }
 
         public class MedicationSchedule

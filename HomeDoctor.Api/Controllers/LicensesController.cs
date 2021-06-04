@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HomeDoctor.Business.IService;
+using HomeDoctor.Business.ViewModel.RequestModel;
 using HomeDoctor.Data.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -47,21 +48,16 @@ namespace HomeDoctor.Api.Controllers
             }
             return NotFound();
         }
-        [HttpPost]
-        public async Task<IActionResult> CreateLicense(string name,int days,float price,string description)
+        [HttpPost("CreateLicense")]
+        public async Task<IActionResult> CreateLicense(LicenseCreate license)
         {
-            var license = new License()
+           if(license != null)
             {
-                Name = name,
-                Days = days,
-                Price = price,
-                Description = description,
-                Status = "active"
-            };
-            var tmp = await _serLicense.CreateLicense(license);
-            if (tmp)
-            {
-                return StatusCode(201);
+                var respone = await _serLicense.CreateLicense(license);
+                if(respone != 0)
+                {
+                    return StatusCode(201, respone);
+                }
             }
             return BadRequest();
         }

@@ -9,10 +9,9 @@ namespace HomeDoctor.Business.ViewModel.RequestModel
         public int HealthRecordId { get; set; }
         public int DoctorAccountId { get; set; }
         public int ContractId { get; set; }
-        public string? Diagnose { get; set; }
-        public DateTime? DateStart { get; set; }
-        public DateTime? DateFinish { get; set; }
+        public string? Conclusion { get; set; }
         public string? Description { get; set; }
+        public int? AppointmentId { get; set; }
         public ICollection<VitalSign>? VitalSigns { get; set; }       
     }
     public class VitalSign
@@ -21,7 +20,8 @@ namespace HomeDoctor.Business.ViewModel.RequestModel
         public int? NumberMax { get; set; }
         public int? NumberMin { get; set; }
         public int? MinuteDangerInterval { get; set; }
-        public string? TimeStart { get; set; }
+        public int? MinuteNormalInterval { get; set; }
+        public DateTime? TimeStart { get; set; }
         public int? MinuteAgain { get; set; }
     }
 }

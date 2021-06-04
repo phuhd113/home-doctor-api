@@ -5,12 +5,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using HomeDoctor.Business.IService;
 using HomeDoctor.Business.ViewModel.RequestModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static HomeDoctor.Business.ViewModel.RequestModel.MIPresciption;
 
 namespace HomeDoctor.Api.Controllers
 {
+    [Authorize]
     [Route("api/v1/[controller]")]
     [ApiController]
     public class PrescriptionController : ControllerBase
@@ -43,30 +45,26 @@ namespace HomeDoctor.Api.Controllers
                 // Notification
                 if (miId != 0)
                 {
-                    var accountId = await _serAccount.GetPatientAccountIdByHRId(request.HealthRecordId);
-                    if (accountId != 0)
-                    {
-                        // Check ActionFirstTime 
-                        if(await _serAction.CheckActionFirstTime(request.ContractId, null, false))
-                        {
-                            await _serAction.UpdateActionFirstTime(request.ContractId, null, true);
-                        }
+                    var accIds = await _serAccount.GetAccountIdsByHRId(request.HealthRecordId);
+                    if (accIds.Count != 0)
+                    {                       
                         //Save notification
                         var noti = new NotificationRequest()
                         {
                             AccountSendId = request.DoctorAccountId,
-                            AccountId = accountId,
+                            AccountId = accIds.Keys.FirstOrDefault(),
                             MedicalInstructionId = miId,
                             NotificationTypeId = 6
                         };
                         await _serNoti.InsertNotification(noti);
                         //var test = await _serMI.
-                        await _serFireBaseFCM.PushNotification(1, request.DoctorAccountId, accountId, 6, null, miId);
+                        await _serFireBaseFCM.PushNotification(1, request.DoctorAccountId, noti.AccountId, 6, null, miId,null,null);
                     }
                     return StatusCode(201,miId);
                 }
             }
             return BadRequest();
+
         }
         /// <summary>
         /// Create Precription with MedicalInstructiontype = 1 (Medication Schedule).Doctor in the system.

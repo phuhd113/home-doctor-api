@@ -11,7 +11,10 @@ namespace HomeDoctor.Business.IService
     {
         public Task<int> CreateAppointment(AppointmentCreate request);
         public Task<ICollection<AppointmentForMonth>> GetAppointmentForMonth(int accountId, DateTime? month);
-        public Task<bool> UpdateAppointment(int appointmentId, DateTime? dateExamination, string status);
+        public Task<bool> UpdateAppointment(int appointmentId, DateTime? dateExamination,string diagnose, string status);
         public Task<bool> CancelAppointmentByPatient(int appointmentId,string reasonCancel);
+        public Task<AppointmentDetailRespone> GetAppointmentById(int appointmentId);
+        public Task<ICollection<AppointmentDetailRespone>> GetAppointmentsBetweenDoctorAndPatient(int healthRecordId, string status);
+        public Task<string> CheckAppointmentToCreate(int healthRecordId);
     }
 }

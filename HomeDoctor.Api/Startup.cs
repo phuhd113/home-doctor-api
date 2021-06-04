@@ -1,11 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
-using HomeDoctor.Api.Signalr;
 using HomeDoctor.Business.IService;
 using HomeDoctor.Business.Quartz;
 using HomeDoctor.Business.Quartz.Jobs;
@@ -15,7 +11,6 @@ using HomeDoctor.Data.DBContext;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -134,29 +129,41 @@ namespace HomeDoctor.Api
             services.AddScoped<IMedicalInstructionTypeService, MedicalInstructionTypeService>();
             services.AddScoped<IHealthRecordService, HealthRecordService>();
             services.AddScoped<IImageService, ImageService>();
-            services.AddScoped<IMedicalInstructionShareService, MedicalInstructionShareService>();
-            services.AddScoped<IFirebaseFCMService, FirebaseFCMService>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IFirebaseFCMService, FirebaseFCMService>();           
             services.AddScoped<IAppointmentService, AppointmentService>();
             services.AddScoped<IPersonalHealthRecordService, PersonalHealthRecordService>();
             services.AddScoped<IActionService, ActionService>();
-           
+            services.AddScoped<IVitalSignService, VitalSignService>();
+            services.AddScoped<ISMSMessageService, SMSMessageService>();
+            services.AddScoped<ITimeService, TimeService>();
+            services.AddScoped<IPaymentService, PaymentService>();           
             // add Quartz serivce
             services.AddSingleton<IJobFactory, SingletonJobFactory>();
             services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
 
+            /*
             //add Job
             services.AddSingleton<HelloWordJob>();
             services.AddSingleton(new JobSchedule(
                 jobType: typeof(HelloWordJob),
-                cronExpression: "0 18 1 ? * *")); // run every 5 seconds
-
-            services.AddSingleton<ActionFirstTimeJob>();
+                cronExpression: "0 18 1 ? * *")); // run every 5 seconds                                 
+            services.AddSingleton<Action8AMJob>();
             services.AddSingleton(new JobSchedule(
-                jobType: typeof(ActionFirstTimeJob),
-                cronExpression: "0 57 14 ? * *"));
+                jobType: typeof(Action8AMJob),
+                cronExpression: "0 58 02 ? * *"));
+            */
+            services.AddSingleton<Action00AMJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(Action00AMJob),
+                cronExpression: "3 0 0 ? * *"));
 
+            services.AddSingleton<Action06AMJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(Action06AMJob),
+                cronExpression: "0 0 6 ? * *"));
 
+            //IronOcr.Installation.LicenseKey = "3C2C3B9A-DC89-41DD-985E-33999472D889";
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -175,13 +182,7 @@ namespace HomeDoctor.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-            });
-            //Signalr
-            app.UseSignalR(routes =>
-            {
-                routes.MapHub<SignalrHub>("/signalr");
-            });
-           
+            });                   
             //configure swagger 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

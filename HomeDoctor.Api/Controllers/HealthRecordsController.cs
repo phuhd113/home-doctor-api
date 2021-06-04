@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using HomeDoctor.Business.IService;
 using HomeDoctor.Business.ViewModel.RequestModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HomeDoctor.Api.Controllers
 {
+    [Authorize]
     [Route("api/v1/[controller]")]
     [ApiController]
     public class HealthRecordsController : ControllerBase
@@ -23,6 +26,7 @@ namespace HomeDoctor.Api.Controllers
         /// <summary>
         /// Get Healthrecords by PatientId. onSystem =true get HR System. onSystem=null getAll.
         /// </summary>
+        [AllowAnonymous]
         [HttpGet("GetHealthRecordByPatientId")]
         public async Task<IActionResult> GetHealthRecordByPatientId(int patientId,bool? onSystem = null)
         {
@@ -60,10 +64,10 @@ namespace HomeDoctor.Api.Controllers
         {
             if(healthRecord != null)
             {
-                var check = await _serHR.CreateHealthRecord(healthRecord);
-                if (check)
+                var hrId = await _serHR.CreateHealthRecord(healthRecord);
+                if (hrId != 0)
                 {
-                    return StatusCode(201);
+                    return StatusCode(201,hrId);
                 }
             }
             return BadRequest();
@@ -81,22 +85,49 @@ namespace HomeDoctor.Api.Controllers
                 }
             }
             return NotFound();
-        }
-
-        [HttpGet("GetHealingConditions")]
-        public async Task<IActionResult> GetHealingConditions(int healthRecordId, int contractId)
+        }      
+        [HttpPut("{healthRecordId}")]
+        public async Task<IActionResult> UpdateHealthRecord(int healthRecordId, HealthRecordUpdate healthRecord)
         {
-            if(healthRecordId != 0 && contractId != 0)
+            if(healthRecordId != 0)
             {
-                var respone = await _serHR.GetHealingConditions(healthRecordId, contractId);
-                if(respone != null)
+                var respone = await _serHR.UpdateHealthRecord(healthRecordId, healthRecord.Place, healthRecord.Description, healthRecord.Diseases);
+                if (respone)
                 {
-                    return Ok(respone);
+                    return StatusCode(204);
                 }
             }
-            return NotFound();
+            return BadRequest();
+        }       
+
+        [HttpPut("DeleteHealthRecord")]
+        public async Task<IActionResult> DeleteHealthRecord([Required]int healthRecordId)
+        {
+            if(healthRecordId != 0)
+            {
+                var respone = await _serHR.DeleteHealthRecord(healthRecordId);
+                if (respone)
+                {
+                    return Ok();
+                }
+            }
+            return BadRequest();
         }
-
-
+        /// <summary>
+        /// Demo 
+        /// </summary>
+        [HttpPut("UpdateActionFirstTime")]
+        public async Task<IActionResult> UpdateActionFirstTimeToDemo(int healthRecordId, bool actionFirstTime)
+        {
+            if(healthRecordId != 0)
+            {
+                var respone = await _serHR.UpdateActionFirstTimeToDemo(healthRecordId, actionFirstTime);
+                if (respone)
+                {
+                    return StatusCode(204);
+                }
+            }
+            return BadRequest();
+        }
     }
 }

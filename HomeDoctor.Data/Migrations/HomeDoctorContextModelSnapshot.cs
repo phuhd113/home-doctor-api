@@ -49,6 +49,21 @@ namespace HomeDoctor.Data.Migrations
                     b.ToTable("DiseaseHealthRecord");
                 });
 
+            modelBuilder.Entity("DiseaseMedicalInstruction", b =>
+                {
+                    b.Property<string>("DiseasesDiseaseId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("MedicalInstructionsMedicalInstructionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("DiseasesDiseaseId", "MedicalInstructionsMedicalInstructionId");
+
+                    b.HasIndex("MedicalInstructionsMedicalInstructionId");
+
+                    b.ToTable("DiseaseMedicalInstruction");
+                });
+
             modelBuilder.Entity("HomeDoctor.Data.Models.Account", b =>
                 {
                     b.Property<int>("AccountId")
@@ -57,119 +72,48 @@ namespace HomeDoctor.Data.Migrations
                         .UseIdentityColumn();
 
                     b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("FireBaseToken")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("FullName")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Gender")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("varchar(7)");
 
                     b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("varchar(20)");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("varchar(15)");
 
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("varchar(20)");
 
                     b.HasKey("AccountId");
 
                     b.HasIndex("RoleId");
 
                     b.ToTable("Account");
-                });
-
-            modelBuilder.Entity("HomeDoctor.Data.Models.ActionEveryDay", b =>
-                {
-                    b.Property<int>("ActionEveryDayId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int?>("ActionEveryWeekId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Examination")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ActionEveryDayId");
-
-                    b.HasIndex("ActionEveryWeekId");
-
-                    b.ToTable("ActionEveryDay");
-                });
-
-            modelBuilder.Entity("HomeDoctor.Data.Models.ActionEveryWeek", b =>
-                {
-                    b.Property<int>("ActionEveryWeekId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int?>("ActionFirstTimeId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("AppointmentWeek")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("PrescriptionWeek")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("VitalSignWeek")
-                        .HasColumnType("bit");
-
-                    b.HasKey("ActionEveryWeekId");
-
-                    b.HasIndex("ActionFirstTimeId");
-
-                    b.ToTable("ActionEveryWeek");
-                });
-
-            modelBuilder.Entity("HomeDoctor.Data.Models.ActionFirstTime", b =>
-                {
-                    b.Property<int>("ActionFirstTimeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<bool>("AppointmentFirst")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ContractId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("PrescriptionFirst")
-                        .HasColumnType("bit");
-
-                    b.HasKey("ActionFirstTimeId");
-
-                    b.HasIndex("ContractId")
-                        .IsUnique();
-
-                    b.ToTable("ActionFirstTime");
                 });
 
             modelBuilder.Entity("HomeDoctor.Data.Models.Appointment", b =>
@@ -179,30 +123,34 @@ namespace HomeDoctor.Data.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int>("ContractId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("DateCanceled")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime>("DateExamination")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Diagnose")
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int>("HealthRecordId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("ReasonCanceled")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("varchar(15)");
 
                     b.HasKey("AppointmentId");
 
-                    b.HasIndex("ContractId");
+                    b.HasIndex("HealthRecordId");
 
                     b.ToTable("Appointment");
                 });
@@ -215,28 +163,41 @@ namespace HomeDoctor.Data.Migrations
                         .UseIdentityColumn();
 
                     b.Property<string>("AddressDoctor")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("AddressPatient")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("ContractCode")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("varchar(15)");
 
                     b.Property<DateTime>("DOBDoctor")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.Property<DateTime>("DOBPatient")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
+
+                    b.Property<DateTime?>("DateApproved")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DateCancel")
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime>("DateFinished")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
+
+                    b.Property<DateTime?>("DateLocked")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DateSigned")
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime>("DateStarted")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.Property<int>("DaysOfTracking")
                         .HasColumnType("int");
@@ -245,37 +206,51 @@ namespace HomeDoctor.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("FullNameDoctor")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("FullNamePatient")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int?>("LicenseId")
                         .HasColumnType("int");
 
                     b.Property<string>("NameLicense")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
 
                     b.Property<string>("PhoneNumberDoctor")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("varchar(15)");
 
                     b.Property<string>("PhoneNumberPatient")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(15)");
 
-                    b.Property<float>("PriceLicense")
-                        .HasColumnType("real");
+                    b.Property<decimal>("PriceLicense")
+                        .HasColumnType("Money");
+
+                    b.Property<string>("ReasonCancel")
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ReasonLocked")
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("varchar(15)");
+
+                    b.Property<string>("TransactionNo")
+                        .HasColumnType("varchar(20)");
 
                     b.Property<string>("WorkLocationDoctor")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("ContractId");
 
@@ -288,19 +263,48 @@ namespace HomeDoctor.Data.Migrations
                     b.ToTable("Contract");
                 });
 
+            modelBuilder.Entity("HomeDoctor.Data.Models.ContractMedicalInstruction", b =>
+                {
+                    b.Property<int>("ContractId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MedicalInstructionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Conclusion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DiseaseChoosedId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DiseaseIds")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ContractId", "MedicalInstructionId");
+
+                    b.HasIndex("MedicalInstructionId");
+
+                    b.ToTable("ContractMedicalInstruction");
+                });
+
             modelBuilder.Entity("HomeDoctor.Data.Models.Disease", b =>
                 {
                     b.Property<string>("DiseaseId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("varchar(2)");
 
                     b.Property<int?>("End")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int?>("Number")
                         .HasColumnType("int");
@@ -324,16 +328,16 @@ namespace HomeDoctor.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Details")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Experience")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Specialization")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("WorkLocation")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("DoctorId");
 
@@ -343,26 +347,6 @@ namespace HomeDoctor.Data.Migrations
                     b.ToTable("Doctor");
                 });
 
-            modelBuilder.Entity("HomeDoctor.Data.Models.FireBaseFCM", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Token")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
-
-                    b.ToTable("FireBaseFCM");
-                });
-
             modelBuilder.Entity("HomeDoctor.Data.Models.HealthRecord", b =>
                 {
                     b.Property<int>("HealthRecordId")
@@ -370,20 +354,36 @@ namespace HomeDoctor.Data.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<bool>("AppointmentFirst")
+                        .HasColumnType("bit");
+
                     b.Property<int?>("ContractId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DateFinished")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DateStarted")
+                        .HasColumnType("datetime");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("PersonalHealthRecordId")
                         .HasColumnType("int");
 
                     b.Property<string>("Place")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("varchar(15)");
+
+                    b.Property<bool>("VitalSignScheduleFirst")
+                        .HasColumnType("bit");
 
                     b.HasKey("HealthRecordId");
 
@@ -403,23 +403,31 @@ namespace HomeDoctor.Data.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<DateTime?>("DateActive")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DateCancel")
+                        .HasColumnType("datetime");
+
                     b.Property<int>("Days")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("NumberOfExamination")
+                    b.Property<int?>("FromBy")
                         .HasColumnType("int");
 
-                    b.Property<float>("Price")
-                        .HasColumnType("real");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("Money");
 
                     b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("varchar(10)");
 
                     b.HasKey("LicenseId");
 
@@ -433,56 +441,69 @@ namespace HomeDoctor.Data.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<int?>("AppointmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Conclusion")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("DateCreate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DateTreatment")
+                        .HasColumnType("datetime");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Diagnose")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("HealthRecordId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Image")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("MIShareFromId")
+                        .HasColumnType("int");
 
                     b.Property<int>("MedicalInstructionTypeId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("PrescriptionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("varchar(15)");
+
+                    b.Property<int?>("VitalSignScheduleId")
+                        .HasColumnType("int");
+
                     b.HasKey("MedicalInstructionId");
+
+                    b.HasIndex("AppointmentId");
 
                     b.HasIndex("HealthRecordId");
 
                     b.HasIndex("MedicalInstructionTypeId");
 
+                    b.HasIndex("PrescriptionId");
+
+                    b.HasIndex("VitalSignScheduleId");
+
                     b.ToTable("MedicalInstruction");
                 });
 
-            modelBuilder.Entity("HomeDoctor.Data.Models.MedicalInstructionShare", b =>
+            modelBuilder.Entity("HomeDoctor.Data.Models.MedicalInstructionImage", b =>
                 {
-                    b.Property<int>("MedicalInstructionShareId")
+                    b.Property<int>("MedicalInstructionImageId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int>("ContractId")
-                        .HasColumnType("int");
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
-                    b.Property<int>("MedicalInstructionId")
-                        .HasColumnType("int");
+                    b.HasKey("MedicalInstructionImageId");
 
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("MedicalInstructionShareId");
-
-                    b.HasIndex("ContractId");
-
-                    b.HasIndex("MedicalInstructionId");
-
-                    b.ToTable("MedicalInstructionShare");
+                    b.ToTable("MedicalInstructionImage");
                 });
 
             modelBuilder.Entity("HomeDoctor.Data.Models.MedicalInstructionType", b =>
@@ -493,10 +514,12 @@ namespace HomeDoctor.Data.Migrations
                         .UseIdentityColumn();
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("varchar(15)");
 
                     b.HasKey("MedicalInstructionTypeId");
 
@@ -510,32 +533,33 @@ namespace HomeDoctor.Data.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int>("AfterNoon")
+                    b.Property<int?>("AfterNoon")
                         .HasColumnType("int");
 
                     b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("MedicationName")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)");
 
-                    b.Property<int>("Morning")
+                    b.Property<int?>("Morning")
                         .HasColumnType("int");
 
-                    b.Property<int>("Night")
+                    b.Property<int?>("Night")
                         .HasColumnType("int");
 
-                    b.Property<int>("Noon")
+                    b.Property<int?>("Noon")
                         .HasColumnType("int");
 
                     b.Property<int>("PrescriptionId")
                         .HasColumnType("int");
 
                     b.Property<string>("Unit")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(15)");
 
                     b.Property<string>("UseTime")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("MedicationScheduleId");
 
@@ -557,11 +581,17 @@ namespace HomeDoctor.Data.Migrations
                     b.Property<int?>("AccountSendId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("AppointmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BodyCustom")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("ContractId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DateCreate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int?>("MedicalInstructionId")
                         .HasColumnType("int");
@@ -575,13 +605,12 @@ namespace HomeDoctor.Data.Migrations
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("VitalSignShareId")
+                        .HasColumnType("int");
+
                     b.HasKey("NotificationId");
 
                     b.HasIndex("AccountId");
-
-                    b.HasIndex("ContractId");
-
-                    b.HasIndex("MedicalInstructionId");
 
                     b.HasIndex("NotificationTypeId");
 
@@ -596,10 +625,12 @@ namespace HomeDoctor.Data.Migrations
                         .UseIdentityColumn();
 
                     b.Property<string>("Body")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("NotificationTypeId");
 
@@ -617,13 +648,7 @@ namespace HomeDoctor.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Career")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DateFinished")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DateStarted")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("Height")
                         .HasColumnType("int");
@@ -646,14 +671,20 @@ namespace HomeDoctor.Data.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<DateTime?>("DateUpdateStatus")
+                        .HasColumnType("datetime");
+
                     b.Property<string>("FamilyMedicalHistory")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
 
                     b.Property<string>("PersonalMedicalHistory")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("PersonalStatus")
+                        .HasColumnType("varchar(15)");
 
                     b.Property<bool>("SmartWatchConnected")
                         .HasColumnType("bit");
@@ -674,27 +705,22 @@ namespace HomeDoctor.Data.Migrations
                         .UseIdentityColumn();
 
                     b.Property<DateTime?>("DateCanceled")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime>("DateFinished")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.Property<DateTime>("DateStarted")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("MedicalInstructionId")
-                        .HasColumnType("int");
+                        .HasColumnType("date");
 
                     b.Property<string>("ReasonCancel")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("varchar(15)");
 
                     b.HasKey("PrescriptionId");
-
-                    b.HasIndex("MedicalInstructionId")
-                        .IsUnique();
 
                     b.ToTable("Prescription");
                 });
@@ -707,13 +733,13 @@ namespace HomeDoctor.Data.Migrations
                         .UseIdentityColumn();
 
                     b.Property<string>("FullName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(15)");
 
                     b.HasKey("RelativeId");
 
@@ -730,7 +756,8 @@ namespace HomeDoctor.Data.Migrations
                         .UseIdentityColumn();
 
                     b.Property<string>("RoleName")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
 
                     b.HasKey("RoleId");
 
@@ -750,14 +777,17 @@ namespace HomeDoctor.Data.Migrations
                     b.Property<int?>("MinuteDangerInterval")
                         .HasColumnType("int");
 
+                    b.Property<int?>("MinuteNormalInterval")
+                        .HasColumnType("int");
+
                     b.Property<int?>("NumberMax")
                         .HasColumnType("int");
 
                     b.Property<int?>("NumberMin")
                         .HasColumnType("int");
 
-                    b.Property<string>("TimeStart")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("TimeStart")
+                        .HasColumnType("datetime");
 
                     b.Property<int>("VitalSignScheduleId")
                         .HasColumnType("int");
@@ -781,22 +811,17 @@ namespace HomeDoctor.Data.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<DateTime>("DateFinished")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTime?>("DateCanceled")
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime>("DateStarted")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("MedicalInstructionId")
-                        .HasColumnType("int");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("varchar(15)");
 
                     b.HasKey("VitalSignScheduleId");
-
-                    b.HasIndex("MedicalInstructionId")
-                        .IsUnique();
 
                     b.ToTable("VitalSignSchedule");
                 });
@@ -808,12 +833,82 @@ namespace HomeDoctor.Data.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int>("VitalSignName")
-                        .HasColumnType("int");
+                    b.Property<string>("VitalSignName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("VitalSignTypeId");
 
                     b.ToTable("VitalSignType");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.VitalSignValue", b =>
+                {
+                    b.Property<int>("VitalSignValueId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("NumberValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PersonalHealthRecordId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TimeValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VitalSignTypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("VitalSignValueId");
+
+                    b.HasIndex("PersonalHealthRecordId");
+
+                    b.HasIndex("VitalSignTypeId");
+
+                    b.ToTable("VitalSignValue");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.VitalSignValueShare", b =>
+                {
+                    b.Property<int>("VitalSignValueShareId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("HealthRecordId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MinuteShare")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TimeShare")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("VitalSignValueShareId");
+
+                    b.HasIndex("HealthRecordId");
+
+                    b.ToTable("VitalSignValueShare");
+                });
+
+            modelBuilder.Entity("MedicalInstructionMedicalInstructionImage", b =>
+                {
+                    b.Property<int>("MedicalInstructionImagesMedicalInstructionImageId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MedicalInstructionsMedicalInstructionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MedicalInstructionImagesMedicalInstructionImageId", "MedicalInstructionsMedicalInstructionId");
+
+                    b.HasIndex("MedicalInstructionsMedicalInstructionId");
+
+                    b.ToTable("MedicalInstructionMedicalInstructionImage");
                 });
 
             modelBuilder.Entity("ContractDisease", b =>
@@ -846,6 +941,21 @@ namespace HomeDoctor.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("DiseaseMedicalInstruction", b =>
+                {
+                    b.HasOne("HomeDoctor.Data.Models.Disease", null)
+                        .WithMany()
+                        .HasForeignKey("DiseasesDiseaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HomeDoctor.Data.Models.MedicalInstruction", null)
+                        .WithMany()
+                        .HasForeignKey("MedicalInstructionsMedicalInstructionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("HomeDoctor.Data.Models.Account", b =>
                 {
                     b.HasOne("HomeDoctor.Data.Models.Role", "Role")
@@ -857,40 +967,15 @@ namespace HomeDoctor.Data.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("HomeDoctor.Data.Models.ActionEveryDay", b =>
-                {
-                    b.HasOne("HomeDoctor.Data.Models.ActionEveryWeek", null)
-                        .WithMany("ActionEveryDays")
-                        .HasForeignKey("ActionEveryWeekId");
-                });
-
-            modelBuilder.Entity("HomeDoctor.Data.Models.ActionEveryWeek", b =>
-                {
-                    b.HasOne("HomeDoctor.Data.Models.ActionFirstTime", null)
-                        .WithMany("ActionEveryWeeks")
-                        .HasForeignKey("ActionFirstTimeId");
-                });
-
-            modelBuilder.Entity("HomeDoctor.Data.Models.ActionFirstTime", b =>
-                {
-                    b.HasOne("HomeDoctor.Data.Models.Contract", "Contract")
-                        .WithOne("ActionFirstTime")
-                        .HasForeignKey("HomeDoctor.Data.Models.ActionFirstTime", "ContractId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Contract");
-                });
-
             modelBuilder.Entity("HomeDoctor.Data.Models.Appointment", b =>
                 {
-                    b.HasOne("HomeDoctor.Data.Models.Contract", "Contract")
+                    b.HasOne("HomeDoctor.Data.Models.HealthRecord", "HealthRecord")
                         .WithMany("Appointments")
-                        .HasForeignKey("ContractId")
+                        .HasForeignKey("HealthRecordId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Contract");
+                    b.Navigation("HealthRecord");
                 });
 
             modelBuilder.Entity("HomeDoctor.Data.Models.Contract", b =>
@@ -918,22 +1003,30 @@ namespace HomeDoctor.Data.Migrations
                     b.Navigation("Patient");
                 });
 
+            modelBuilder.Entity("HomeDoctor.Data.Models.ContractMedicalInstruction", b =>
+                {
+                    b.HasOne("HomeDoctor.Data.Models.Contract", "Contract")
+                        .WithMany("ContractMedicalInstructions")
+                        .HasForeignKey("ContractId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HomeDoctor.Data.Models.MedicalInstruction", "MedicalInstruction")
+                        .WithMany("ContractMedicalInstructions")
+                        .HasForeignKey("MedicalInstructionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Contract");
+
+                    b.Navigation("MedicalInstruction");
+                });
+
             modelBuilder.Entity("HomeDoctor.Data.Models.Doctor", b =>
                 {
                     b.HasOne("HomeDoctor.Data.Models.Account", "Account")
                         .WithOne("Doctor")
                         .HasForeignKey("HomeDoctor.Data.Models.Doctor", "AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
-                });
-
-            modelBuilder.Entity("HomeDoctor.Data.Models.FireBaseFCM", b =>
-                {
-                    b.HasOne("HomeDoctor.Data.Models.Account", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -959,6 +1052,10 @@ namespace HomeDoctor.Data.Migrations
 
             modelBuilder.Entity("HomeDoctor.Data.Models.MedicalInstruction", b =>
                 {
+                    b.HasOne("HomeDoctor.Data.Models.Appointment", "Appointment")
+                        .WithMany("MedicalInstructions")
+                        .HasForeignKey("AppointmentId");
+
                     b.HasOne("HomeDoctor.Data.Models.HealthRecord", "HealthRecord")
                         .WithMany("MedicalInstructions")
                         .HasForeignKey("HealthRecordId")
@@ -971,28 +1068,23 @@ namespace HomeDoctor.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("HomeDoctor.Data.Models.Prescription", "Prescription")
+                        .WithMany("MedicalInstructions")
+                        .HasForeignKey("PrescriptionId");
+
+                    b.HasOne("HomeDoctor.Data.Models.VitalSignSchedule", "VitalSignSchedule")
+                        .WithMany("MedicalInstructions")
+                        .HasForeignKey("VitalSignScheduleId");
+
+                    b.Navigation("Appointment");
+
                     b.Navigation("HealthRecord");
 
                     b.Navigation("MedicalInstructionType");
-                });
 
-            modelBuilder.Entity("HomeDoctor.Data.Models.MedicalInstructionShare", b =>
-                {
-                    b.HasOne("HomeDoctor.Data.Models.Contract", "Contract")
-                        .WithMany("MedicalInstructionShares")
-                        .HasForeignKey("ContractId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Prescription");
 
-                    b.HasOne("HomeDoctor.Data.Models.MedicalInstruction", "MedicalInstruction")
-                        .WithMany("MedicalInstructionShares")
-                        .HasForeignKey("MedicalInstructionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Contract");
-
-                    b.Navigation("MedicalInstruction");
+                    b.Navigation("VitalSignSchedule");
                 });
 
             modelBuilder.Entity("HomeDoctor.Data.Models.MedicationSchedule", b =>
@@ -1014,14 +1106,6 @@ namespace HomeDoctor.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HomeDoctor.Data.Models.Contract", "Contract")
-                        .WithMany()
-                        .HasForeignKey("ContractId");
-
-                    b.HasOne("HomeDoctor.Data.Models.MedicalInstruction", "MedicalInstruction")
-                        .WithMany()
-                        .HasForeignKey("MedicalInstructionId");
-
                     b.HasOne("HomeDoctor.Data.Models.NotificationType", "NotificationType")
                         .WithMany()
                         .HasForeignKey("NotificationTypeId")
@@ -1029,10 +1113,6 @@ namespace HomeDoctor.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Account");
-
-                    b.Navigation("Contract");
-
-                    b.Navigation("MedicalInstruction");
 
                     b.Navigation("NotificationType");
                 });
@@ -1057,17 +1137,6 @@ namespace HomeDoctor.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Patient");
-                });
-
-            modelBuilder.Entity("HomeDoctor.Data.Models.Prescription", b =>
-                {
-                    b.HasOne("HomeDoctor.Data.Models.MedicalInstruction", "MedicalInstruction")
-                        .WithOne("Prescription")
-                        .HasForeignKey("HomeDoctor.Data.Models.Prescription", "MedicalInstructionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MedicalInstruction");
                 });
 
             modelBuilder.Entity("HomeDoctor.Data.Models.Relative", b =>
@@ -1100,15 +1169,49 @@ namespace HomeDoctor.Data.Migrations
                     b.Navigation("VitalSignType");
                 });
 
-            modelBuilder.Entity("HomeDoctor.Data.Models.VitalSignSchedule", b =>
+            modelBuilder.Entity("HomeDoctor.Data.Models.VitalSignValue", b =>
                 {
-                    b.HasOne("HomeDoctor.Data.Models.MedicalInstruction", "MedicalInstruction")
-                        .WithOne("VitalSignSchedule")
-                        .HasForeignKey("HomeDoctor.Data.Models.VitalSignSchedule", "MedicalInstructionId")
+                    b.HasOne("HomeDoctor.Data.Models.PersonalHealthRecord", "PersonalHealthRecord")
+                        .WithMany("VitalSignValues")
+                        .HasForeignKey("PersonalHealthRecordId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("MedicalInstruction");
+                    b.HasOne("HomeDoctor.Data.Models.VitalSignType", "VitalSignType")
+                        .WithMany()
+                        .HasForeignKey("VitalSignTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PersonalHealthRecord");
+
+                    b.Navigation("VitalSignType");
+                });
+
+            modelBuilder.Entity("HomeDoctor.Data.Models.VitalSignValueShare", b =>
+                {
+                    b.HasOne("HomeDoctor.Data.Models.HealthRecord", "HealthRecord")
+                        .WithMany()
+                        .HasForeignKey("HealthRecordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("HealthRecord");
+                });
+
+            modelBuilder.Entity("MedicalInstructionMedicalInstructionImage", b =>
+                {
+                    b.HasOne("HomeDoctor.Data.Models.MedicalInstructionImage", null)
+                        .WithMany()
+                        .HasForeignKey("MedicalInstructionImagesMedicalInstructionImageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HomeDoctor.Data.Models.MedicalInstruction", null)
+                        .WithMany()
+                        .HasForeignKey("MedicalInstructionsMedicalInstructionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("HomeDoctor.Data.Models.Account", b =>
@@ -1118,39 +1221,28 @@ namespace HomeDoctor.Data.Migrations
                     b.Navigation("Patient");
                 });
 
-            modelBuilder.Entity("HomeDoctor.Data.Models.ActionEveryWeek", b =>
+            modelBuilder.Entity("HomeDoctor.Data.Models.Appointment", b =>
                 {
-                    b.Navigation("ActionEveryDays");
-                });
-
-            modelBuilder.Entity("HomeDoctor.Data.Models.ActionFirstTime", b =>
-                {
-                    b.Navigation("ActionEveryWeeks");
+                    b.Navigation("MedicalInstructions");
                 });
 
             modelBuilder.Entity("HomeDoctor.Data.Models.Contract", b =>
                 {
-                    b.Navigation("ActionFirstTime");
-
-                    b.Navigation("Appointments");
+                    b.Navigation("ContractMedicalInstructions");
 
                     b.Navigation("HealthRecord");
-
-                    b.Navigation("MedicalInstructionShares");
                 });
 
             modelBuilder.Entity("HomeDoctor.Data.Models.HealthRecord", b =>
                 {
+                    b.Navigation("Appointments");
+
                     b.Navigation("MedicalInstructions");
                 });
 
             modelBuilder.Entity("HomeDoctor.Data.Models.MedicalInstruction", b =>
                 {
-                    b.Navigation("MedicalInstructionShares");
-
-                    b.Navigation("Prescription");
-
-                    b.Navigation("VitalSignSchedule");
+                    b.Navigation("ContractMedicalInstructions");
                 });
 
             modelBuilder.Entity("HomeDoctor.Data.Models.Patient", b =>
@@ -1165,10 +1257,14 @@ namespace HomeDoctor.Data.Migrations
             modelBuilder.Entity("HomeDoctor.Data.Models.PersonalHealthRecord", b =>
                 {
                     b.Navigation("HealthRecords");
+
+                    b.Navigation("VitalSignValues");
                 });
 
             modelBuilder.Entity("HomeDoctor.Data.Models.Prescription", b =>
                 {
+                    b.Navigation("MedicalInstructions");
+
                     b.Navigation("MedicationSchedules");
                 });
 
@@ -1179,6 +1275,8 @@ namespace HomeDoctor.Data.Migrations
 
             modelBuilder.Entity("HomeDoctor.Data.Models.VitalSignSchedule", b =>
                 {
+                    b.Navigation("MedicalInstructions");
+
                     b.Navigation("VitalSigns");
                 });
 #pragma warning restore 612, 618

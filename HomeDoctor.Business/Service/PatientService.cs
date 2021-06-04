@@ -17,7 +17,7 @@ namespace HomeDoctor.Business.Service
     {
         private readonly IRepositoryBase<Patient> _repo;
         private readonly IRepositoryBase<Contract> _repoContract;
-        private readonly IUnitOfWork _uow;       
+        private readonly IUnitOfWork _uow;
         public PatientService(IUnitOfWork uow)
         {
             _uow = uow;
@@ -30,9 +30,8 @@ namespace HomeDoctor.Business.Service
 
             if (patientId != 0)
             {
-                var patient = await _repo.GetDbSet().Include(x => x.Account).Include(x => x.Relatives).
-                                FirstOrDefaultAsync(x => x.PatientId == patientId);
-                if(patient != null)
+                var patient = await _repo.GetDbSet().Include(x => x.Account).Include(x => x.Relatives).FirstOrDefaultAsync(x => x.PatientId == patientId);
+                if (patient != null)
                 {
                     var patientInfor = new PatientInformation()
                     {
@@ -44,8 +43,6 @@ namespace HomeDoctor.Business.Service
                         FullName = patient.Account.FullName,
                         PhoneNumber = patient.Account.PhoneNumber,
                         Career = patient.Career,
-                        DateFinished = patient.DateFinished,
-                        DateStarted = patient.DateStarted,
                         Gender = patient.Account.Gender,
                         Height = patient.Height,
                         Weight = patient.Weight,
@@ -55,39 +52,73 @@ namespace HomeDoctor.Business.Service
                             PhoneNumber = x.PhoneNumber
                         }).ToList() :
                         null
-                    };                    
+                    };
                     return patientInfor;
-                }                            
+                }
             }
             return null;
         }
 
-        public async Task<ICollection<PatientTracking>> GetPatientTrackingByDoctor(int doctorId)
+        public async Task<ICollection<PatientTrackingRespone>> GetPatientTrackingByDoctor(int doctorId)
         {
-            if(doctorId != 0)
+            if (doctorId != 0)
             {
-                var patient = await _repoContract.GetDbSet()//.Include(x => x.Doctor).Include(x => x.Patient)
-                    .Where(x => x.DoctorId == doctorId && x.Status.Equals("ACTIVE")).Include(x => x.HealthRecord)
-                    .Include(x => x.ActionFirstTime).Include(x => x.Appointments)
-                    .Select(x => new PatientTracking()
+                var patients = await _repoContract.GetDbSet()//.Include(x => x.Doctor).Include(x => x.Patient)
+                    .Where(x => x.DoctorId == doctorId && (x.Status.Equals("ACTIVE") || x.Status.Equals("LOCKED")))/*.Include(x => x.HealthRecord).ThenInclude(x => x.MedicalInstructions)
+                    .Include(x => x.HealthRecord).ThenInclude(x => x.Appointments)*/
+                    .Select(x => new PatientTrackingRespone()
                     {
                         PatientId = x.PatientId,
                         PatientName = x.Patient.Account.FullName,
-                        DiseaseContract = x.Diseases.Select(x => new PatientTracking.Disease() { 
+                        ContractStatus = x.Status,
+                        PersonalStatus = x.Patient.PersonalHealthRecord.PersonalStatus,
+                        DateUpdateStatus = x.Patient.PersonalHealthRecord.DateUpdateStatus,
+                        DiseaseContract = x.HealthRecord.Diseases.Select(x => new PatientTrackingRespone.Disease()
+                        {
                             DiseaseId = x.DiseaseId,
                             DiseaseName = x.Name
                         }).ToList(),
                         ContractId = x.ContractId,
                         HealthRecordId = x.HealthRecord.HealthRecordId,
                         AccountPatientId = x.Patient.AccountId,
-                        AppointmentLast = (x.Appointments.Any() ? (DateTime?)x.Appointments.OrderBy(x => x.DateExamination).FirstOrDefault().DateExamination : null),
-                        AppointmentFirst = x.ActionFirstTime.AppointmentFirst,
-                        PrescriptionFirst = x.ActionFirstTime.PrescriptionFirst
+                        AppointmentLast = x.HealthRecord.Appointments != null ? x.HealthRecord.Appointments.OrderByDescending(x => x.DateExamination).FirstOrDefault().DateExamination : (DateTime?)null,
+                        AppointmentFirst = x.HealthRecord.AppointmentFirst,
+                        VitalSignScheduleFirst = x.HealthRecord.VitalSignScheduleFirst,
+                        SmartWatchConnected = x.HealthRecord.PersonalHealthRecord.SmartWatchConnected
                     }).ToListAsync();
-                if(patient != null)
+                if (patients.Any())
                 {
-                    return patient;
+                    return patients;
                 }
+            }
+            return null;
+        }
+
+        public async Task<ICollection<PatientInformation>> GetAllPatient()
+        {
+            var patients = await _repo.GetDbSet().Include(x => x.Account).Include(x => x.Relatives).Select(patient => new PatientInformation()
+            {
+                PatientId = patient.PatientId,
+                AccountId = patient.AccountId,
+                Address = patient.Account.Address,
+                DateOfBirth = patient.Account.DateOfBirth,
+                Email = patient.Account.Email,
+                FullName = patient.Account.FullName,
+                PhoneNumber = patient.Account.PhoneNumber,
+                Career = patient.Career,
+                Gender = patient.Account.Gender,
+                Height = patient.Height,
+                Weight = patient.Weight,
+                Relatives = patient.Relatives.Count != 0 ? patient.Relatives.Select(x => new RelativeInformation()
+                {
+                    FullName = x.FullName,
+                    PhoneNumber = x.PhoneNumber
+                }).ToList() :
+                    null
+            }).ToListAsync();
+            if (patients.Any())
+            {
+                return patients;
             }
             return null;
         }

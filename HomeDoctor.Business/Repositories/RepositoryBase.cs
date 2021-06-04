@@ -76,5 +76,24 @@ namespace HomeDoctor.Business.Repositories
             }           
             return false;
         }
+        public async Task<bool> UpdateRange(ICollection<T> entitis)
+        {
+            if (entitis.Any())
+            {
+                _dbSet.UpdateRange(entitis);
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> InsertRange(ICollection<T> entitis)
+        {
+            if (entitis.Any())
+            {
+                await _dbSet.AddRangeAsync(entitis);
+                return true;
+            }
+            return false;
+        }
     }
 }

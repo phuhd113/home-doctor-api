@@ -17,7 +17,9 @@ namespace HomeDoctor.Business.ViewModel.ResponeModel
             public int NotificationType { get; set; }
             public int? ContractId { get; set; }
             public int? MedicalInstructionId { get; set; }
-            public string TimeAgo { get; set; }
+            public int? AppointmentId { get; set; }
+            public double TimeAgo { get; set; }
+            public string DateCreated { get; set; }
         }
 
     }

@@ -37,12 +37,12 @@ namespace HomeDoctor.Business.Quartz
         }
 
         private static ITrigger CreateTrigger(JobSchedule schedule)
-        {
+        {          
             return TriggerBuilder
              .Create()
              .WithIdentity($"{schedule.JobType.FullName}.trigger")
              .WithCronSchedule(schedule.CronExpression, x => 
-             x.InTimeZone(TimeZoneInfo.Local.Id.Equals("SE Asia Standard Time") ? TimeZoneInfo.Local : TimeZoneInfo.FindSystemTimeZoneById("Asia/Ho_Chi_Minh")))            
+             x.InTimeZone(TimeZoneInfo.Local))            
              .WithDescription(schedule.CronExpression)
              .Build();
         }

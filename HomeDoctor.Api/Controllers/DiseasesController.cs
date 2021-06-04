@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HomeDoctor.Business.IService;
+using HomeDoctor.Business.ViewModel.RequestModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HomeDoctor.Api.Controllers
 {
+    [Authorize]
     [Route("api/v1/[controller]")]
     [ApiController]
     public class DiseasesController : ControllerBase
@@ -67,6 +70,33 @@ namespace HomeDoctor.Api.Controllers
             if(patientId != 0)
             {
                 var respone = await _serDisease.GetDiseasesToCreateContract(patientId);
+                if(respone != null)
+                {
+                    return Ok(respone);
+                }
+            }
+            return NotFound();
+        }
+        [HttpPost("InsertDiseases")]
+        public async Task<IActionResult> InsertDiseases(ICollection<DiseaseCreate> diseases)
+        {
+            if (diseases.Any())
+            {
+                var respone = await _serDisease.InsertDiseases(diseases);
+                if (respone)
+                {
+                    return StatusCode(201);
+                }
+            }
+            return BadRequest();
+        }
+
+        [HttpGet("SearchDiseases")]
+        public async Task<IActionResult> SearchDiseases(string str)
+        {
+            if (!string.IsNullOrEmpty(str))
+            {
+                var respone = await _serDisease.SearchDiseases(str);
                 if(respone != null)
                 {
                     return Ok(respone);

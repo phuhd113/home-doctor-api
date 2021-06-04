@@ -2,10 +2,6 @@ F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\bin\Debug\netcoreapp3.1\HomeDoct
 F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\obj\Debug\netcoreapp3.1\HomeDoctor.Business.csprojAssemblyReference.cache
 F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\obj\Debug\netcoreapp3.1\HomeDoctor.Business.AssemblyInfoInputs.cache
 F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\obj\Debug\netcoreapp3.1\HomeDoctor.Business.AssemblyInfo.cs
-F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\bin\Debug\netcoreapp3.1\x86\leptonica-1.80.0.dll
-F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\bin\Debug\netcoreapp3.1\x86\tesseract41.dll
-F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\bin\Debug\netcoreapp3.1\x64\leptonica-1.80.0.dll
-F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\bin\Debug\netcoreapp3.1\x64\tesseract41.dll
 F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\bin\Debug\netcoreapp3.1\HomeDoctor.Business.deps.json
 F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\bin\Debug\netcoreapp3.1\HomeDoctor.Business.dll
 F:\CN10_Capstone\HomeDoctor\HomeDoctor.Business\bin\Debug\netcoreapp3.1\HomeDoctor.Business.pdb

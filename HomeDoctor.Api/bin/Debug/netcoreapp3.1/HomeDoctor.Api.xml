@@ -11,7 +11,7 @@
             <param name="month">2021/03</param>
             <returns></returns>
         </member>
-        <member name="M:HomeDoctor.Api.Controllers.AppointmentsController.UpdateAppointment(System.Int32,System.Nullable{System.DateTime},System.String,System.Int32)">
+        <member name="M:HomeDoctor.Api.Controllers.AppointmentsController.UpdateAppointment(System.Int32,System.Nullable{System.DateTime},System.String,System.String,System.Int32)">
             <summary>
             Update appointment.DateExamination from Doctor when status "PENDING". status "ACTIVE" from Patient
             </summary>
@@ -35,7 +35,7 @@
             Get contract by status
             </summary>
         </member>
-        <member name="M:HomeDoctor.Api.Controllers.ContractsController.UpdateContract(System.Int32,System.Int32,System.Int32,System.String,System.Nullable{System.DateTime},System.Nullable{System.Int32})">
+        <member name="M:HomeDoctor.Api.Controllers.ContractsController.UpdateContract(System.Int32,HomeDoctor.Business.ViewModel.RequestModel.ContractUpdateRequest)">
             <summary>
             Update Status of Contract .Doctor update status "APPROVED" or "CANCELD".Patient update status "ACTIVE" or "CANCELP".
             </summary>
@@ -43,6 +43,11 @@
         <member name="M:HomeDoctor.Api.Controllers.ContractsController.GetContractById(System.Int32)">
             <summary>
             Get contract by id
+            </summary>
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.ContractsController.UpdateContractToDemo(System.Int32,System.String,System.Nullable{System.DateTime})">
+            <summary>
+            Demo Locked Contract
             </summary>
         </member>
         <member name="M:HomeDoctor.Api.Controllers.DiseasesController.GetDiseases">
@@ -85,6 +90,11 @@
             Patient create a Healthrecord to save medical Instruction Old.
             </summary>
         </member>
+        <member name="M:HomeDoctor.Api.Controllers.HealthRecordsController.UpdateActionFirstTimeToDemo(System.Int32,System.Boolean)">
+            <summary>
+            Demo 
+            </summary>
+        </member>
         <member name="M:HomeDoctor.Api.Controllers.ImagesController.GetImageByPath(System.String)">
             <summary>
             Load Image by Path Image
@@ -95,7 +105,7 @@
             Get Licenses by status.status = null to getAll
             </summary>
         </member>
-        <member name="M:HomeDoctor.Api.Controllers.MedicalInstructionsController.InsertMedicalInstructionOld(HomeDoctor.Business.ViewModel.RequestModel.MedicalInstructionCreate,Microsoft.AspNetCore.Http.IFormFile)">
+        <member name="M:HomeDoctor.Api.Controllers.MedicalInstructionsController.InsertMedicalInstructionOld(HomeDoctor.Business.ViewModel.RequestModel.MedicalInstructionCreate,System.Collections.Generic.ICollection{Microsoft.AspNetCore.Http.IFormFile},System.String)">
             <summary>
             Create medical instruction old with image
             </summary>
@@ -105,25 +115,20 @@
             Get Medical Instruction by Id
             </summary>      
         </member>
-        <member name="M:HomeDoctor.Api.Controllers.MedicalInstructionsController.GetMedicalInstructionToCreateContract(System.Int32,System.Collections.Generic.ICollection{System.String},System.Int32)">
+        <member name="M:HomeDoctor.Api.Controllers.MedicalInstructionsController.GetMedicalInstructionToCreateContract(System.Int32,System.String,System.Nullable{System.Int32},System.Collections.Generic.ICollection{System.Int32})">
             <summary>
             Get All Medical Instruction of Health Record have the same DieaseId .
             </summary>      
         </member>
-        <member name="M:HomeDoctor.Api.Controllers.MedicalInstructionsController.GetMedicalInstructionsByHealthRecordId(System.Int32)">
+        <member name="M:HomeDoctor.Api.Controllers.MedicalInstructionsController.GetMedicalInstructionsByHealthRecordId(System.Int32,System.Nullable{System.Int32})">
             <summary>
             Get MedicalInstrucs of Patient by HealthRecordId. 
             </summary>     
         </member>
-        <member name="M:HomeDoctor.Api.Controllers.MedicalInstructionSharesController.GetMedicalInstructionShare(System.Int32)">
-            <summary>
-            Get Medical InstructionShared by contractId
-            </summary>   
-        </member>
-        <member name="M:HomeDoctor.Api.Controllers.MedicalInstructionSharesController.ShareMedicalInstruction(System.Int32,System.Collections.Generic.ICollection{System.Int32})">
+        <member name="M:HomeDoctor.Api.Controllers.MedicalInstructionsController.ShareMedicalInstructions(System.Int32,System.Collections.Generic.ICollection{System.Int32},System.Int32)">
             <summary>
             Patient share medicalInstructions with Doctor from contractID
-            </summary>   
+            </summary>     
         </member>
         <member name="M:HomeDoctor.Api.Controllers.MedicalInstructrionTypesController.GetMedicalInstructionTypeByStatus(System.String)">
             <summary>
@@ -145,11 +150,7 @@
             Get Information of Patient by Id.
             </summary>
         </member>
-        <member name="M:HomeDoctor.Api.Controllers.PatientsController.GetPatientTrackingByDoctor(System.Int32)">
-            <summary>
-            Get patient's information Tracking by doctor with contract status "ACTIVE" by doctorID
-            </summary>
-        </member>
+        <!-- Badly formed XML comment ignored for member "M:HomeDoctor.Api.Controllers.PatientsController.GetPatientTrackingByDoctor(System.Int32)" -->
         <member name="M:HomeDoctor.Api.Controllers.PersonalHealthReocrdsController.UpdateSmartWatchConnect(System.Int32,System.Boolean)">
             <summary>
             Update when connect smart watch or disconect
@@ -169,6 +170,16 @@
             <summary>
             Patient Get Prescription by PatientId,Doctor add HealthRecordId.MedicalInsructionType = 1
             </summary>      
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.VitalSignsController.GetVitalSignShareById(System.Int32)">
+            <summary>
+            Get vital Sign Value When Patient share and notifi for doctor
+            </summary>
+        </member>
+        <member name="M:HomeDoctor.Api.Controllers.VitalSignsController.GeVitalSignShareByDate(System.Int32,System.Nullable{System.DateTime})">
+            <summary>
+            Get vital Sign Value Share By Date , date == null to Getall
+            </summary>
         </member>
     </members>
 </doc>

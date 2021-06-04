@@ -11,7 +11,9 @@ namespace HomeDoctor.Business.IService
     {
         public Task<bool> Upload(string phoneNumber, int healthRecordId, int medicalInstructionTypeId, IFormFile fileImage);
 
-        public Task TestReadImage(IFormFile fileImage);
+        public Task<string> ReadImage(IFormFile fileImage);
+        //public Task TestUpdateCheckImage(IFormFile formFile);
+        public Task<bool> CheckImageExist(int healthRecordId, int medicalInstructionTypeId, IFormFile formFile);
 
     }
 }

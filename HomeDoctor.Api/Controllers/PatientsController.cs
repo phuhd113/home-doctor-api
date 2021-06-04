@@ -40,18 +40,28 @@ namespace HomeDoctor.Api.Controllers
             return NotFound();
         }
         /// <summary>
-        /// Get patient's information Tracking by doctor with contract status "ACTIVE" by doctorID
+        /// Get patient's information Tracking by doctor with contract status "ACTIVE" && "LOCKED" by doctorID
         /// </summary>
         [HttpGet("getPatientTrackingByDoctor")]
         public async Task<IActionResult> GetPatientTrackingByDoctor(int doctorId)
         {
             if(doctorId != 0)
             {
-                var patient = await _serPatient.GetPatientTrackingByDoctor(doctorId);
-                if(patient.Count != 0)
+                var patients = await _serPatient.GetPatientTrackingByDoctor(doctorId);
+                if(patients != null)
                 {
-                    return Ok(patient);
+                    return Ok(patients);
                 }
+            }
+            return NotFound();
+        }
+        [HttpGet("GetAllPatient")]
+        public async Task<IActionResult> GetAllPatient()
+        {
+            var respone = await _serPatient.GetAllPatient();
+            if(respone != null)
+            {
+                return Ok(respone);
             }
             return NotFound();
         }

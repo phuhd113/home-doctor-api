@@ -10,5 +10,6 @@ namespace HomeDoctor.Business.IService
     {
         public Task<bool> UpdateSmartWatchConnect(int patientId,bool isConnected);
 
+        public Task<bool> UpdatePersonalStatus(int patientId, string status);
     }
 }

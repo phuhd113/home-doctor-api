@@ -15,7 +15,7 @@ namespace HomeDoctor.Business.ViewModel.ResponeModel
             public int MedicalInstructionId { get; set; }
             public string Diagnose { get; set; }
             public string Description { get; set; }
-            public string? Image { get; set; }
+            public ICollection<string?> Images { get; set; }
             public PrescriptionRespone? PrescriptionRespone { get; set; }
         }
     }

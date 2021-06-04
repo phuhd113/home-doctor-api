@@ -18,7 +18,6 @@ namespace HomeDoctor.Business.Service
         private readonly IRepositoryBase<HealthRecord> _repo;
         private readonly IRepositoryBase<PersonalHealthRecord> _repoPHR;
         private readonly IRepositoryBase<Disease> _repoDisease;
-        private readonly IRepositoryBase<MedicalInstructionShare> _repoMiShare;
         private readonly IRepositoryBase<MedicalInstruction> _repoMI;
         private readonly IUnitOfWork _uow;
 
@@ -28,27 +27,28 @@ namespace HomeDoctor.Business.Service
             _repo = _uow.GetRepository<HealthRecord>();
             _repoPHR = _uow.GetRepository<PersonalHealthRecord>();
             _repoDisease = _uow.GetRepository<Disease>();
-            _repoMiShare = _uow.GetRepository<MedicalInstructionShare>();
             _repoMI = _uow.GetRepository<MedicalInstruction>();
         }
 
-        public async Task<bool> CreateHealthRecord(HealthRecordCreate healthRecord)
+        public async Task<int> CreateHealthRecord(HealthRecordCreate healthRecord)
         {
-           if(healthRecord != null)
-            {               
+            if (healthRecord != null)
+            {
                 var patient = _repoPHR.GetDbSet().Where(x => x.PatientId == healthRecord.PatientId).FirstOrDefault();
                 var tmp = new HealthRecord()
                 {
                     PersonalHealthRecordId = patient.PersonalHealthRecordId,
-                    DateCreated = TimeZoneInfo.Local.Id.Equals("SE Asia Standard Time") ? DateTime.Now : DateTime.Now.AddHours(7),
+                    DateCreated = DateTime.Now,
                     Description = healthRecord.Description,
                     Place = healthRecord.Place,
+                    DateStarted = healthRecord.DateStarted,
+                    DateFinished = healthRecord.DateFinished,                   
                 };
                 // Get dieases to create healthRecord 
-                if (healthRecord.DiceaseIds != null)
+                if (healthRecord.DiseaseIds != null)
                 {
                     tmp.Diseases = new List<Disease>();
-                    foreach(var diceaseId in healthRecord.DiceaseIds)
+                    foreach (var diceaseId in healthRecord.DiseaseIds)
                     {
                         var disease = await _repoDisease.GetById(diceaseId);
                         tmp.Diseases.Add(disease);
@@ -58,29 +58,61 @@ namespace HomeDoctor.Business.Service
                 if (check)
                 {
                     await _uow.CommitAsync();
-                    return true;
+                    return tmp.HealthRecordId;
                 }
             }
-            return false;
-        }      
+            return 0;
+        }
 
-        public async Task<HealthRecordInformation> GetHealthRecordById(int healthRecordId)
+        public async Task<bool> DeleteHealthRecord(int healthRecordId)
         {
             if(healthRecordId != 0)
             {
-                var hr = await _repo.GetDbSet().Where(x => x.HealthRecordId == healthRecordId).Include(x => x.Diseases).FirstOrDefaultAsync();
+                var hr = await _repo.GetDbSet().Include(x => x.MedicalInstructions).Where(x => x.HealthRecordId == healthRecordId).FirstOrDefaultAsync();
                 if(hr != null)
+                {
+                    hr.Status = "DELETE";
+                    if (hr.MedicalInstructions.Any())
+                    {
+                        foreach(var mi in hr.MedicalInstructions)
+                        {
+                            mi.Status = "DELETE";
+                        }
+                    }
+                    if(await _repo.Update(hr))
+                    {
+                        await _uow.CommitAsync();
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public async Task<HealthRecordInformation> GetHealthRecordById(int healthRecordId)
+        {
+            if (healthRecordId != 0)
+            {
+                var hr = await _repo.GetDbSet().Where(x => x.HealthRecordId == healthRecordId)
+                    .Include(x => x.Diseases).Include(x => x.Contract).FirstOrDefaultAsync();
+                if (hr != null)
                 {
                     var tmp = new HealthRecordInformation()
                     {
-                        Diseases = hr.Diseases.Select(x => new HealthRecordInformation.Disease() {
+                        ContractStatus = hr.ContractId != null ? hr.Contract.Status : null,
+                        HealthRecordId = hr.HealthRecordId,                        
+                        Diseases = hr.Diseases.Select(x => new HealthRecordInformation.Disease()
+                        {
                             DiseaseId = x.DiseaseId,
                             DiseaseName = x.Name
                         }).ToList(),
                         DateCreated = hr.DateCreated,
                         Description = hr.Description,
                         ContractId = hr.ContractId,
-                        Place = hr.Place
+                        Place = hr.Place,
+                        DateFinished = hr.DateFinished,
+                        DateStarted = hr.DateStarted,
+                        Status = hr.Status
                     };
                     return tmp;
                 }
@@ -91,21 +123,26 @@ namespace HomeDoctor.Business.Service
 
         public async Task<ICollection<HealthRecordInformation>> GetHealthRecordByPatientId(int patientId, bool? onSystem)
         {
-           if(patientId != 0)
+            if (patientId != 0)
             {
-                var healthRecords = await _repo.GetDbSet().Where(x => x.PersonalHealthRecord.PatientId == patientId && (onSystem == true ? x.ContractId != null: true)).Include(x => x.Diseases).Select(x => new HealthRecordInformation()
+                var healthRecords = await _repo.GetDbSet().Where(x => x.PersonalHealthRecord.PatientId == patientId && (onSystem == true ? x.ContractId != null : true) && (onSystem == false ? x.ContractId == null : true) && !x.Status.Equals("DELETE") && !x.Status.Equals("UNSIGNED") && (x.ContractId != null ? x.Contract.Status.Equals("ACTIVE")|| x.Contract.Status.Equals("FINISHED") : true) ).Include(x => x.Diseases).Select(x => new HealthRecordInformation()
                 {
                     HealthRecordId = x.HealthRecordId,
-                    Diseases  = x.Diseases.Select(y => new HealthRecordInformation.Disease() { 
+                    Diseases = x.Diseases.Select(y => new HealthRecordInformation.Disease()
+                    {
                         DiseaseId = y.DiseaseId,
                         DiseaseName = y.Name
                     }).ToList(),
                     Place = x.Place,
                     Description = x.Description,
                     DateCreated = x.DateCreated,
-                    ContractId = x.Contract.ContractId
+                    ContractId = x.Contract.ContractId,
+                    DateFinished = (x.ContractId != null ? x.Contract.DateFinished : x.DateFinished),
+                    Status = x.Status,
+                    ContractStatus = x.Contract.Status,
+                    DateStarted = (x.ContractId != null ? x.Contract.DateStarted : x.DateStarted),                   
                 }).ToListAsync();
-                if(healthRecords.Count != 0)
+                if (healthRecords.Any())
                 {
                     return healthRecords;
                 }
@@ -116,68 +153,123 @@ namespace HomeDoctor.Business.Service
 
         public async Task<HealthRecordOverviewRespone> GetHROverviewByHRId(int healthRecordId)
         {
-            if(healthRecordId != 0)
+            if (healthRecordId != 0)
             {
-                var overviewHr = await _repo.GetDbSet().Where(x => x.HealthRecordId == healthRecordId).Include(x => x.Contract).Include(x => x.PersonalHealthRecord).ThenInclude(x => x.Patient).ThenInclude(x => x.Account).Include(x => x.Diseases).Select(x => new HealthRecordOverviewRespone()
+                var overviewHr = await _repo.GetDbSet().Where(x => x.HealthRecordId == healthRecordId && x.ContractId != null)
+                    .Include(x => x.Contract).Include(x => x.PersonalHealthRecord).ThenInclude(x => x.Patient).ThenInclude(x => x.Account).Include(x => x.Diseases).Include(x => x.Contract)
+                    .Include(x => x.MedicalInstructions).ThenInclude(x => x.MedicalInstructionImages)
+                    .Include(x => x.MedicalInstructions).ThenInclude(x => x.MedicalInstructionType)
+                    .Include(x => x.Appointments)
+                    .FirstOrDefaultAsync();
+                if (overviewHr != null)
                 {
-                    FullNamePatient = x.Contract.FullNamePatient,
-                    AddressPatient = x.Contract.AddressPatient,
-                    PhoneNumberPatient = x.Contract.PhoneNumberPatient,
-                    DOBPatient = x.Contract.DOBPatient,
-                    Gender = x.PersonalHealthRecord.Patient.Account.Gender,
-                    Career = x.PersonalHealthRecord.Patient.Career,
-                    Height = x.PersonalHealthRecord.Patient.Height,
-                    Weight = x.PersonalHealthRecord.Patient.Weight,
-                    PersonalMedicalHistory = x.PersonalHealthRecord.PersonalMedicalHistory,
-                    FamilyMedicalHistory = x.PersonalHealthRecord.FamilyMedicalHistory,
-                    AccountPatientId = x.PersonalHealthRecord.Patient.AccountId,
-                    Diseases = x.Diseases.Select(y => new HealthRecordOverviewRespone.Disease()
+                    var respone = new HealthRecordOverviewRespone()
                     {
-                        DiseaseId = y.DiseaseId,
-                        DiseaseName = y.Name
-                    }).ToList()
-                }).FirstOrDefaultAsync();
-                if(overviewHr != null)
-                {
-                    return overviewHr;
+                        FullNamePatient = overviewHr.Contract.FullNamePatient,
+                        AddressPatient = overviewHr.Contract.AddressPatient,
+                        PhoneNumberPatient = overviewHr.Contract.PhoneNumberPatient,                        
+                        DOBPatient = overviewHr.Contract.DOBPatient,
+                        Gender = overviewHr.PersonalHealthRecord.Patient.Account.Gender,
+                        Career = overviewHr.PersonalHealthRecord.Patient.Career,
+                        Height = overviewHr.PersonalHealthRecord.Patient.Height,
+                        Weight = overviewHr.PersonalHealthRecord.Patient.Weight,
+                        PersonalMedicalHistory = overviewHr.PersonalHealthRecord.PersonalMedicalHistory,
+                        FamilyMedicalHistory = overviewHr.PersonalHealthRecord.FamilyMedicalHistory,
+                        AccountPatientId = overviewHr.PersonalHealthRecord.Patient.AccountId,
+                        SmartWatchConnected = overviewHr.PersonalHealthRecord.SmartWatchConnected,
+                        Diseases = overviewHr.Diseases.Select(y => new HealthRecordOverviewRespone.Disease()
+                        {
+                            DiseaseId = y.DiseaseId,
+                            DiseaseName = y.Name
+                        }).ToList(),
+                        ContractDetail = new HealthRecordOverviewRespone.Contract()
+                        {
+                            ContractId = overviewHr.ContractId.GetValueOrDefault(),
+                            DateStarted = overviewHr.Contract.DateStarted.ToString("dd/MM/yyyy"),
+                            DateFinished = overviewHr.Contract.DateFinished.ToString("dd/MM/yyyy")
+                        },
+                        MedicalInstructions = overviewHr.MedicalInstructions.Any() ? overviewHr.MedicalInstructions.Where(y => y.Status.Equals("CONTRACT"))
+                    .Select(x => new HealthRecordOverviewRespone.MedicalInstruction()
+                    {
+                        MedicalInstructionId = x.MedicalInstructionId,
+                        Images = x.MedicalInstructionImages.Any() ? x.MedicalInstructionImages.Select(x => x.Image).ToList() : null,
+                        Conclusion = x.Conclusion,
+                        MedicalInstructionType = x.MedicalInstructionType.Name,
+                        PrescriptionId = x.PrescriptionId,
+                        VitalSignScheduleId = x.VitalSignScheduleId
+                    }).ToList() : null,
+                        AppointmentNext = overviewHr.Appointments != null ? overviewHr.Appointments
+                    .Where(y => y.Status.Equals("ACTIVE")).OrderByDescending(y => y.DateExamination).Select(y => new HealthRecordOverviewRespone.Appointment()
+                    {
+                        AppointmentId = y.AppointmentId,
+                        DateExamination = y.DateExamination,
+                        Note = y.Note,
+                        Status = y.Status
+                    }).FirstOrDefault() : null
+                    };
+                    return respone;
                 }
             }
             return null;
         }
-        public async Task<HealingConditions> GetHealingConditions(int healthRecordId, int contractId)
+
+        public async Task<bool> UpdateActionFirstTimeToDemo(int healthRecordId, bool actionFirstTime)
         {
-            if (healthRecordId != 0 && contractId != 0)
+            if (healthRecordId != 0)
             {
-                // Check connect with smartWatch ? and Get medicalInstruction created or inserted
-                var connectedSW = await _repoPHR.GetDbSet().Where(x => x.HealthRecords.Any(y => y.HealthRecordId == healthRecordId)).Select(x => x.SmartWatchConnected).FirstOrDefaultAsync();
-                // Get medicalInstruction shared
-                var miShare = await _repoMiShare.GetDbSet().Where(x => x.ContractId == contractId && x.Status.Equals("CONTRACT")).Include(x => x.MedicalInstruction.MedicalInstructionType)
-                    .Select(x => x.MedicalInstruction).ToListAsync();
-                /*
-                // Get MedicalInstruoc Created Or Insert on HR
-                var mi = await _repoMI.GetDbSet().Where(x => x.HealthRecordId == healthRecordId && (x.MedicalInstructionTypeId == 4 || x.MedicalInstructionTypeId == 6)).Include(x => x.MedicalInstructionType).ToListAsync();
-                */
-                
-                var respone = new HealingConditions()
+                var hr = await _repo.GetById(healthRecordId);
+                if (hr != null)
                 {
-                    SmartWatchConnected = connectedSW,
-                    MedicalInstructionTypes = miShare.GroupBy(x => x.MedicalInstructionType.Name).Select(x => new HealingConditions.MedicalInstructionType()
+                    hr.AppointmentFirst = actionFirstTime;
+                    hr.VitalSignScheduleFirst = actionFirstTime;
+                    if (await _repo.Update(hr))
                     {
-                        MIType = x.Key,
-                        MedicalInstructions = x.Select(y => new HealingConditions.MedicalInstructionShare()
-                        {
-                            MedicalInstructionId = y.MedicalInstructionId,
-                            Image = y.Image,
-                            Diagnose = y.Diagnose
-                        }).ToList()
-                    }).ToList()
-                };
-                if(respone != null)
-                {
-                    return respone;
-                }                
+                        await _uow.CommitAsync();
+                        return true;
+                    }
+                }
             }
-            return null;
+            return false;
+        }
+
+        public async Task<bool> UpdateHealthRecord(int healthRecordId, string place, string description, ICollection<string> diseases)
+        {
+            if (healthRecordId != 0)
+            {
+                var hr = await _repo.GetDbSet().Include(x => x.Diseases)
+                    .Where(x => x.HealthRecordId == healthRecordId).FirstOrDefaultAsync();
+                if (hr != null)
+                {
+                    if (hr.ContractId != null)
+                    {
+                        if (!string.IsNullOrEmpty(description))
+                        {
+                            hr.Description = description;
+                        }
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(description))
+                        {
+                            hr.Description = description;
+                        }
+                        if (!string.IsNullOrEmpty(place))
+                        {
+                            hr.Place = place;
+                        }
+                        if (diseases.Any())
+                        {
+                            hr.Diseases = await _repoDisease.GetDbSet().Where(x => diseases.Any(y => y.Equals(x.DiseaseId))).ToListAsync();
+                        }
+                    }
+                    if (await _repo.Update(hr))
+                    {
+                        await _uow.CommitAsync();
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 }

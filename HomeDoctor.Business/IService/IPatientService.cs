@@ -11,6 +11,8 @@ namespace HomeDoctor.Business.IService
     {
         public Task<PatientInformation> GetPatientInformation(int patientId);
 
-        public Task<ICollection<PatientTracking>> GetPatientTrackingByDoctor(int doctorId);
+        public Task<ICollection<PatientTrackingRespone>> GetPatientTrackingByDoctor(int doctorId);
+
+        public Task<ICollection<PatientInformation>> GetAllPatient();
     }
 }

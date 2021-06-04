@@ -10,9 +10,9 @@ namespace HomeDoctor.Business.ViewModel.ResponeModel
         public string Content { get; set; }
         public string UseTime { get; set; }
         public string Unit { get; set; }
-        public int Morning { get; set; }
-        public int Noon { get; set; }
-        public int AfterNoon { get; set; }
-        public int Night { get; set; }
+        public int? Morning { get; set; }
+        public int? Noon { get; set; }
+        public int? AfterNoon { get; set; }
+        public int? Night { get; set; }
     }
 }

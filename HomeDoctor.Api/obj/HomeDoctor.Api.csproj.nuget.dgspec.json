@@ -152,6 +152,10 @@
               "target": "Package",
               "version": "[5.0.0, )"
             },
+            "Microsoft.Extensions.Identity.Stores": {
+              "target": "Package",
+              "version": "[5.0.5, )"
+            },
             "Quartz": {
               "target": "Package",
               "version": "[3.2.4, )"
@@ -160,9 +164,9 @@
               "target": "Package",
               "version": "[5.0.1, )"
             },
-            "Tesseract": {
+            "Twilio": {
               "target": "Package",
-              "version": "[4.1.1, )"
+              "version": "[5.57.0, )"
             }
           },
           "imports": [

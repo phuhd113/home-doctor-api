@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30523.141
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDoctor.Api", "HomeDoctor.Api\HomeDoctor.Api.csproj", "{EA4DA409-34C7-4034-9377-6BC4A29C3944}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeDoctor.Api", "HomeDoctor.Api\HomeDoctor.Api.csproj", "{EA4DA409-34C7-4034-9377-6BC4A29C3944}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDoctor.Data", "HomeDoctor.Data\HomeDoctor.Data.csproj", "{90716982-DAF1-4738-896E-8E7EDAB104D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeDoctor.Data", "HomeDoctor.Data\HomeDoctor.Data.csproj", "{90716982-DAF1-4738-896E-8E7EDAB104D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDoctor.Business", "HomeDoctor.Business\HomeDoctor.Business.csproj", "{FC7E51E7-B9B9-4E9D-A6DE-2A2CB6A01E94}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeDoctor.Business", "HomeDoctor.Business\HomeDoctor.Business.csproj", "{FC7E51E7-B9B9-4E9D-A6DE-2A2CB6A01E94}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
